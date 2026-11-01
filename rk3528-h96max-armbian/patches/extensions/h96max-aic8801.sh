@@ -6,7 +6,7 @@ declare -g H96_AIC_REF="commit:ccf8fd059f70384fae4878c1048603510c2df700"
 declare -g H96_AIC_FW_DIR="/lib/firmware/aic8800/SDIO/aic8800D80"
 
 function extension_prepare_config__h96max_aic8801_packages() {
-	add_packages_to_image bluez rfkill
+	add_packages_to_image bluez rfkill python3-libgpiod
 }
 
 function post_family_config__h96max_aic8801_src_dir() {

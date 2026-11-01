@@ -30,6 +30,15 @@ for firmware in fw_adid.bin fw_patch.bin fw_patch_table.bin fmacfw.bin aic_userc
 	[[ -s "${file}" ]] || { echo "Missing ${file}" >&2; exit 1; }
 done
 
+led_overlay="${repo_dir}/patches/userpatches/overlay/h96-fd655"
+for file in h96-fd655.py h96-fd655.service h96-fd655.json; do
+	[[ -s "${repo_dir}/led/${file}" ]] || { echo "Missing LED file: ${repo_dir}/led/${file}" >&2; exit 1; }
+done
+mkdir -p "${led_overlay}"
+install -m 0755 "${repo_dir}/led/h96-fd655.py" "${led_overlay}/h96-fd655.py"
+install -m 0644 "${repo_dir}/led/h96-fd655.service" "${led_overlay}/h96-fd655.service"
+install -m 0644 "${repo_dir}/led/h96-fd655.json" "${led_overlay}/h96-fd655.json"
+
 cp -a "${repo_dir}/patches/." "${build_dir}/"
 
 threads="${H96_BUILD_THREADS:-8}"
