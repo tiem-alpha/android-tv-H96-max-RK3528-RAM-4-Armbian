@@ -1,0 +1,132 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/dts-v1/;
+
+#include "rk3528-hinlink-ht2.dts"
+
+/ {
+	model = "H96 Max RK3528";
+	compatible = "h96,h96max-rk3528", "rockchip,rk3528";
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+		bootargs = "earlycon=uart8250,mmio32,0xff9f0000 console=ttyS0,115200n8";
+	};
+
+	/* USB power enables are GPIO4_PB5 and GPIO4_PC1 in the running DTB. */
+	vcc5v0_host: vcc5v0-host-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc5v0_host";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		regulator-boot-on;
+		regulator-always-on;
+		enable-active-high;
+		gpio = <&gpio4 RK_PB5 GPIO_ACTIVE_HIGH>;
+		vin-supply = <&vcc5v0_sys>;
+	};
+
+	vcc5v0_otg: vcc5v0-otg-regulator {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc5v0_otg";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		enable-active-high;
+		gpio = <&gpio4 RK_PC1 GPIO_ACTIVE_HIGH>;
+		vin-supply = <&vcc5v0_sys>;
+	};
+
+	acodec_sound: acodec-sound {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "rk3528-acodec";
+		simple-audio-card,format = "i2s";
+		simple-audio-card,mclk-fs = <256>;
+		simple-audio-card,cpu { sound-dai = <&sai2>; };
+		simple-audio-card,codec { sound-dai = <&acodec>; };
+	};
+};
+
+/* Android uses PWM3 for the IR receiver. */
+&pwm3 { status = "okay"; };
+&adc_keys { status = "okay"; };
+
+&vdd_cpu { pwms = <&pwm7 0 5000 1>; };
+&vdd_gpu { pwms = <&pwm4 0 5000 1>; };
+
+&pwm0 { status = "disabled"; };
+&pwm1 { status = "disabled"; };
+&pwm2 { status = "okay"; };
+&pwm4 { status = "okay"; };
+&pwm7 { status = "okay"; };
+
+&sdmmc {
+	/* Keep the SD slot at 3.3 V while debugging card reinitialisation. */
+	max-frequency = <25000000>;
+	no-1-8-v;
+	no-sdio;
+	no-mmc;
+	pinctrl-names = "default", "normal", "idle";
+	pinctrl-1 = <&sdmmc_clk &sdmmc_cmd &sdmmc_det &sdmmc_bus4>;
+	pinctrl-2 = <&sdmmc_clk &sdmmc_cmd &sdmmc_det &sdmmc_bus4>;
+	/delete-property/ sd-uhs-sdr12;
+	/delete-property/ sd-uhs-sdr25;
+	/delete-property/ sd-uhs-sdr104;
+	/delete-property/ sd-uhs-sdr50;
+};
+
+/* HT2 uses GPIO1_PA6; the H96 Max Wi-Fi reset is GPIO4_PA4. */
+&sdio_pwrseq {
+	/* Android also muxes GPIO1_PC3 to CLKM1 32 kHz for the radio. */
+	pinctrl-0 = <&h96_wifi_enable &clkm1_32k_out>;
+	reset-gpios = <&gpio4 RK_PA4 GPIO_ACTIVE_LOW>;
+};
+
+/* Preserve the original Android WLAN platform string for this board. */
+&wireless_wlan { wifi_chip_type = "ap6275s"; };
+
+/* Android's Wi-Fi SDIO node keeps this tuning flag enabled. */
+&sdio0 { rockchip,use-v2-tuning; };
+
+&pinctrl {
+	h96-wifi {
+		h96_wifi_enable: wifi-enable {
+			rockchip,pins = <4 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
+};
+
+&sai2 { status = "okay"; };
+&acodec {
+	status = "okay";
+	pa-ctl-gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_HIGH>;
+};
+
+/* HT2's LEDs are wired differently; Android reports GPIO1_PA6. */
+&leds {
+	/delete-property/ pinctrl-0;
+	/delete-node/ work;
+	/delete-node/ wlan;
+	pwr-wifi {
+		gpios = <&gpio1 RK_PA6 GPIO_ACTIVE_HIGH>;
+		linux,default-trigger = "none";
+		default-state = "on";
+	};
+};
+
+&u2phy_host { phy-supply = <&vcc5v0_host>; };
+&u2phy_otg { vbus-supply = <&vcc5v0_otg>; };
+
+&scmi_clk { assigned-clock-rates = <600000000>; };
+
+&cpu0_opp_table {
+	/delete-node/ opp-816000000;
+	/delete-node/ opp-1008000000;
+	/delete-node/ opp-1200000000;
+	/delete-node/ opp-1416000000;
+	/delete-node/ opp-1608000000;
+	/delete-node/ opp-1800000000;
+	/delete-node/ opp-2016000000;
+};
+
+&dmc { status = "disabled"; };
+/* Keep the installed Android/eMMC invisible to the Linux MMC driver. */
+&sdhci { status = "disabled"; };

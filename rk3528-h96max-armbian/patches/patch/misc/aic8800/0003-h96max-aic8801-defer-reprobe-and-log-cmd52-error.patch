@@ -1,0 +1,37 @@
+--- a/drivers/net/wireless/aicsemi/aic8800/aic8800_bsp/aic_bsp_driver.c
++++ b/drivers/net/wireless/aicsemi/aic8800/aic8800_bsp/aic_bsp_driver.c
+@@ -1952,5 +1952,8 @@
+ int aicbsp_get_feature(struct aicbsp_feature_t *feature, char *fw_path)
+ {
++	if (!aicbsp_sdiodev)
++		return -ENODEV;
++
+ 	if (aicbsp_sdiodev->chipid == PRODUCT_ID_AIC8801 ||
+         aicbsp_sdiodev->chipid == PRODUCT_ID_AIC8800DC ||
+         aicbsp_sdiodev->chipid == PRODUCT_ID_AIC8800DW){
+--- a/drivers/net/wireless/aicsemi/aic8800/aic8800_fdrv/aicwf_sdio.c
++++ b/drivers/net/wireless/aicsemi/aic8800/aic8800_fdrv/aicwf_sdio.c
+@@ -106,5 +106,7 @@
+     while (true) {
+         ret = aicwf_sdio_readb(sdiodev, sdiodev->sdio_reg.flow_ctrl_reg, &fc_reg);
+         if (ret) {
++            sdio_err("flow control CMD52 reg 0x%02x failed: %d\n",
++                     sdiodev->sdio_reg.flow_ctrl_reg, ret);
+-            return -1;
++            return ret;
+         }
+@@ -568,5 +570,14 @@
+ 	if (func->num != 1) {
+ 		return err;
+ 	}
+ 
++	/* Function 1 can probe before the BSP has initialized function 2 after
++	 * an SDIO host reset. Defer until aicbsp_get_feature() is usable.
++	 */
++	{
++		struct aicbsp_feature_t feature;
++		if (aicbsp_get_feature(&feature, NULL) < 0)
++			return -EPROBE_DEFER;
++	}
++
+ 	bus_if = kzalloc(sizeof(struct aicwf_bus), GFP_KERNEL);

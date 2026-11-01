@@ -1,0 +1,19 @@
+--- a/drivers/net/wireless/aicsemi/aic8800/aic8800_bsp/Makefile
++++ b/drivers/net/wireless/aicsemi/aic8800/aic8800_bsp/Makefile
+@@ -1,5 +1,5 @@
+ CONFIG_SDIO_SUPPORT := y
+-CONFIG_SDIO_PWRCTRL := y
++CONFIG_SDIO_PWRCTRL := n
+ # CONFIG_AIC_FW_PATH = "/vendor/etc/firmware"
+ CONFIG_AIC_FW_PATH = "/lib/firmware/aic8800"
+ export CONFIG_AIC_FW_PATH
+--- a/drivers/net/wireless/aicsemi/aic8800/aic8800_fdrv/Makefile
++++ b/drivers/net/wireless/aicsemi/aic8800/aic8800_fdrv/Makefile
+@@ -75,7 +75,7 @@
+ CONFIG_SDIO_BT=n
+ CONFIG_USE_5G ?= y
+-CONFIG_SDIO_PWRCTRL ?= y
++CONFIG_SDIO_PWRCTRL ?= n
+ CONFIG_CREATE_TRACE_POINTS = n
+ CONFIG_TXRX_THREAD_PRIO = y
+ # CONFIG_COEX = n for BT_ONLY, CONFIG_COEX =y for combo and sw

@@ -1,0 +1,8 @@
+verbosity=8
+bootlogo=false
+
+# RK3528 debug UART at 0xff9f0000 is serial0 / ttyS0 in this board DTB.
+# Keep HDMI output and add the UART console through extraargs because the
+# generic rockchip64 boot script uses ttyS2 for console=serial/both.
+console=display
+extraargs=cma=256M systemd.show_status=1 console=ttyS0,115200n8 ignore_loglevel

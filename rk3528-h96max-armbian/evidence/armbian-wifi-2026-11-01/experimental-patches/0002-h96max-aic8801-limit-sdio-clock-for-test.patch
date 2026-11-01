@@ -1,0 +1,6 @@
+--- a/drivers/net/wireless/aicsemi/aic8800/aic8800_bsp/aic_bsp_driver.h
++++ b/drivers/net/wireless/aicsemi/aic8800/aic8800_bsp/aic_bsp_driver.h
+@@ -520,2 +520,2 @@
+-#define FEATURE_SDIO_CLOCK          50000000 // 0: default, other: target clock rate
++#define FEATURE_SDIO_CLOCK          25000000 // H96 Max AIC8801: test SDIO signal margin
+ #define FEATURE_SDIO_CLOCK_V3       150000000 // 0: default, other: target clock rate

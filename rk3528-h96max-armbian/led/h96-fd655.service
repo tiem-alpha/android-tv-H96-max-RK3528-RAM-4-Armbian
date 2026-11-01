@@ -1,0 +1,12 @@
+[Unit]
+Description=H96 Max FD655 clock and network indicators
+After=systemd-udev-settle.service network.target time-sync.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/lib/h96-fd655.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

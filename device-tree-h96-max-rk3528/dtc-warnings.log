@@ -1,0 +1,13 @@
+device-tree-h96-max-rk3528/running.dts: Warning (unit_address_vs_reg): /memory: node has a reg or ranges property, but no unit name
+device-tree-h96-max-rk3528/running.dts: Warning (unit_address_format): /reserved-memory/drm-logo@00000000: unit name should not have leading 0s
+device-tree-h96-max-rk3528/running.dts: Warning (unit_address_format): /reserved-memory/drm-cubic-lut@00000000: unit name should not have leading 0s
+device-tree-h96-max-rk3528/running.dts: Warning (simple_bus_reg): /clocks/xin24m: missing or empty reg/ranges property
+device-tree-h96-max-rk3528/running.dts: Warning (simple_bus_reg): /clocks/mclkin-sai0: missing or empty reg/ranges property
+device-tree-h96-max-rk3528/running.dts: Warning (simple_bus_reg): /clocks/mclkin-sai1: missing or empty reg/ranges property
+device-tree-h96-max-rk3528/running.dts: Warning (unique_unit_address): /reserved-memory/drm-logo@00000000: duplicate unit-address (also used in node /reserved-memory/drm-cubic-lut@00000000)
+device-tree-h96-max-rk3528/running.dts: Warning (graph_child_address): /vop@ff840000/ports/port@0: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
+device-tree-h96-max-rk3528/running.dts: Warning (graph_child_address): /vop@ff840000/ports/port@1: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
+device-tree-h96-max-rk3528/running.dts: Warning (graph_child_address): /tve@ff880000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
+device-tree-h96-max-rk3528/running.dts: Warning (graph_child_address): /tve@ff880000/ports/port@0: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
+device-tree-h96-max-rk3528/running.dts: Warning (graph_child_address): /hdmi@ff8d0000/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
+device-tree-h96-max-rk3528/running.dts: Warning (graph_child_address): /hdmi@ff8d0000/ports/port@0: graph node has single child node 'endpoint@0', #address-cells/#size-cells are not necessary
