@@ -1,0 +1,773 @@
+--- a/aic8800_bsp/Makefile
++++ b/aic8800_bsp/Makefile
+@@ -3,7 +3,6 @@
+ CONFIG_AIC_FW_PATH = "/lib/firmware/aic8800-gtx-a870f7f/SDIO/aic8800"
+ #CONFIG_AIC_FW_PATH = "/lib/firmware/aic8800"
+ export CONFIG_AIC_FW_PATH
+-ccflags-y += -DCONFIG_AIC_FW_PATH=\"$(CONFIG_AIC_FW_PATH)\"
+ 
+ MODULE_NAME := aic8800_bsp
+ ifeq ($(CONFIG_SDIO_SUPPORT), y)
+--- a/aic8800_bsp/aic_bsp_driver.c
++++ b/aic8800_bsp/aic_bsp_driver.c
+@@ -242,6 +242,8 @@
+ 
+ void rwnx_cmd_mgr_deinit(struct rwnx_cmd_mgr *cmd_mgr)
+ {
++	if (!cmd_mgr || !cmd_mgr->print || !cmd_mgr->drain)
++		return;
+ 	cmd_mgr->print(cmd_mgr);
+ 	cmd_mgr->drain(cmd_mgr);
+ 	cmd_mgr->print(cmd_mgr);
+@@ -2063,12 +2065,21 @@
+ 
+ int aicbsp_get_feature(struct aicbsp_feature_t *feature, char *fw_path)
+ {
++	if (!feature)
++		return -EINVAL;
++	memset(feature, 0, sizeof(*feature));
++	if (!aicbsp_sdiodev) {
++		pr_err("H96: BSP absent in aicbsp_get_feature\n");
++		return -ENODEV;
++	}
+ 	if (aicbsp_sdiodev->chipid == PRODUCT_ID_AIC8801 ||
+         aicbsp_sdiodev->chipid == PRODUCT_ID_AIC8800DC ||
+         aicbsp_sdiodev->chipid == PRODUCT_ID_AIC8800DW){
+ 	    feature->sdio_clock = FEATURE_SDIO_CLOCK;
+ 	}else if (aicbsp_sdiodev->chipid == PRODUCT_ID_AIC8800D80){
+         feature->sdio_clock = FEATURE_SDIO_CLOCK_V3;
++	} else {
++		return -ENODEV;
+ 	}
+ 	feature->sdio_phase = FEATURE_SDIO_PHASE;
+ 	feature->hwinfo     = aicbsp_info.hwinfo;
+--- a/aic8800_bsp/aic_bsp_main.c
++++ b/aic8800_bsp/aic_bsp_main.c
+@@ -375,15 +375,23 @@
+ 	}
+ 
+ 	aicbsp_pdev = platform_device_alloc("aic-bsp", -1);
++	if (!aicbsp_pdev) {
++		platform_driver_unregister(&aicbsp_driver);
++		return -ENOMEM;
++	}
+ 	ret = platform_device_add(aicbsp_pdev);
+ 	if (ret) {
+ 		pr_err("register platform device failed: %d\n", ret);
++		platform_device_put(aicbsp_pdev);
++		platform_driver_unregister(&aicbsp_driver);
+ 		return ret;
+ 	}
+ 
+ 	ret = sysfs_create_group(&(aicbsp_pdev->dev.kobj), &aicbsp_attribute_group);
+ 	if (ret) {
+ 		pr_err("register sysfs create group failed!\n");
++		platform_device_unregister(aicbsp_pdev);
++		platform_driver_unregister(&aicbsp_driver);
+ 		return ret;
+ 	}
+ 
+--- a/aic8800_bsp/aicsdio.c
++++ b/aic8800_bsp/aicsdio.c
+@@ -85,7 +85,9 @@
+ 
+ static int aicbsp_dummy_probe(struct sdio_func *func, const struct sdio_device_id *id)
+ {
+-	if (func && (func->num != 2))
++	if (!func)
++		return -ENODEV;
++	if (func->num != 2)
+ 		return 0;
+ 
+ 	if(func->vendor != SDIO_VENDOR_ID_AIC8801 &&
+@@ -159,6 +161,9 @@
+ 	int pre_power_state;
+ 	int cur_power_state;
+ 
++	if ((subsys != AIC_WIFI && subsys != AIC_BLUETOOTH) ||
++	    (state != AIC_PWR_ON && state != AIC_PWR_OFF))
++		return -EINVAL;
+ 	mutex_lock(&aicbsp_power_lock);
+ 	aicbsp_load_fw_in_fdrv = false;
+ 	cur_power_map = pre_power_map;
+@@ -179,6 +184,8 @@
+ 				goto err0;
+ 			if (aicbsp_sdio_init())
+ 				goto err1;
++			if (!aicbsp_sdiodev)
++				goto err2;
+ 			if (aicbsp_driver_fw_init(aicbsp_sdiodev))
+ 				goto err2;
+ #ifndef CONFIG_FDRV_NO_REG_SDIO
+@@ -254,7 +261,7 @@
+ 	(void)args;
+ 	if (aicbsp_sdiodev)
+ 		return aicbsp_sdiodev->bus_if;
+-	return dev_get_drvdata((const struct device *)args);
++	return args ? dev_get_drvdata((const struct device *)args) : NULL;
+ }
+ 
+ 
+@@ -266,7 +273,8 @@
+ 	struct aicwf_bus *bus_if;
+ 	int err = -ENODEV;
+ 
+-	if (func == NULL) {
++	if (!func || !func->card || !func->card->host ||
++	    !func->card->sdio_func[0]) {
+ 		sdio_err("%s func is null\n", __func__);
+ 		return err;
+ 	}
+@@ -313,6 +321,12 @@
+     aicbsp_sdiodev = sdiodev;
+ 
+ 	err = aicwf_sdio_chipmatch(sdiodev, func->vendor, func->device);
++	if (err) {
++		kfree(sdiodev);
++		kfree(bus_if);
++		aicbsp_sdiodev = NULL;
++		return -ENODEV;
++	}
+ 
+ 	sdiodev->func = func;
+ 	if(sdiodev->chipid == PRODUCT_ID_AIC8800DC || sdiodev->chipid == PRODUCT_ID_AIC8800DW){
+@@ -337,17 +351,18 @@
+ 		goto fail;
+ 	}
+ 
++	aicbsp_platform_init(sdiodev);
+ 	if (aicwf_sdio_bus_init(sdiodev) == NULL) {
+ 		sdio_err("sdio bus init err\r\n");
++		err = -EIO;
+ 		goto fail;
+ 	}
+-
+-	aicbsp_platform_init(sdiodev);
+ 
+ 	up(&aicbsp_probe_semaphore);
+ 
+ 	return 0;
+ fail:
++	aicbsp_sdiodev = NULL;
+ 	aicwf_sdio_func_deinit(sdiodev);
+ 	dev_set_drvdata(&func->dev, NULL);
+ 	kfree(sdiodev);
+@@ -392,6 +407,7 @@
+ 	aicwf_sdio_func_deinit(sdiodev);
+ 
+ 	dev_set_drvdata(&sdiodev->func->dev, NULL);
++	aicbsp_sdiodev = NULL;
+ 	kfree(sdiodev);
+ 
+ done:
+@@ -892,7 +908,7 @@
+ static void aicwf_sdio_bus_stop(struct device *dev)
+ {
+ 	struct aicwf_bus *bus_if = aicbsp_get_drvdata(dev);
+-	struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++	struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ 	int ret;
+ 
+ #if defined(CONFIG_SDIO_PWRCTRL)
+@@ -1076,7 +1092,7 @@
+ 	uint prio;
+ 	int ret = -EBADE;
+ 	struct aicwf_bus *bus_if = dev_get_drvdata(dev);
+-	struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++	struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ 
+ 	prio = (pkt->priority & 0x7);
+ 	spin_lock_bh(&sdiodev->tx_priv->txqlock);
+@@ -1104,7 +1120,7 @@
+ {
+ 	int ret = -1;
+ 	struct aicwf_bus *bus_if = dev_get_drvdata(dev);
+-	struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++	struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ 
+ 	down(&sdiodev->tx_priv->cmd_txsema);
+ 	sdiodev->tx_priv->cmd_txstate = true;
+@@ -1289,12 +1305,16 @@
+ static int aicwf_sdio_bus_start(struct device *dev)
+ {
+ 	struct aicwf_bus *bus_if = dev_get_drvdata(dev);
+-	struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++	struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ 	int ret = 0;
+ 
+ 	if(sdiodev->chipid == PRODUCT_ID_AIC8801){
+ 		sdio_claim_host(sdiodev->func);
+-		sdio_claim_irq(sdiodev->func, aicwf_sdio_hal_irqhandler);
++		ret = sdio_claim_irq(sdiodev->func, aicwf_sdio_hal_irqhandler);
++		if (ret) {
++			sdio_release_host(sdiodev->func);
++			return ret;
++		}
+ 		//enable sdio interrupt
+ 		ret = aicwf_sdio_writeb(sdiodev, sdiodev->sdio_reg.intr_config_reg, 0x07);
+ 		if (ret != 0)
+@@ -1420,7 +1440,7 @@
+ void aicwf_sdio_hal_irqhandler(struct sdio_func *func)
+ {
+ 	struct aicwf_bus *bus_if = dev_get_drvdata(&func->dev);
+-	struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++	struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ 	u8 intstatus = 0;
+ 	u8 byte_len = 0;
+ 	struct sk_buff *pkt = NULL;
+@@ -1428,7 +1448,9 @@
+ 
+     //AICWFDBG(LOGDEBUG,"%s bsp enter \r\n", __func__);
+ 
+-    if(aicbsp_sdiodev->sdio_hal_irqhandler){
++    if (!sdiodev)
++        return;
++    if(aicbsp_sdiodev && aicbsp_sdiodev->sdio_hal_irqhandler){
+         aicbsp_sdiodev->sdio_hal_irqhandler(func);
+         return;
+     }
+@@ -1523,7 +1545,7 @@
+ void aicwf_sdio_hal_irqhandler_func2(struct sdio_func *func)
+ {
+     struct aicwf_bus *bus_if = dev_get_drvdata(&func->dev);
+-    struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++    struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+     u8 intstatus = 0;
+     u8 byte_len = 0;
+     #ifdef CONFIG_PREALLOC_RX_SKB
+@@ -1623,7 +1645,7 @@
+ 	int ret = 0;
+ 
+ 	sdio_dbg("%s\n", __func__);
+-	if (sdiodev->func == NULL) {
++	if (!sdiodev || !sdiodev->func) {
+ 		printk("%s, NULL sdio func\n", __func__);
+ 		return;
+ 	}
+@@ -1701,7 +1723,9 @@
+ 	int ret = 0;
+ 	struct aicbsp_feature_t feature;
+ 
+-	aicbsp_get_feature(&feature, NULL);
++	ret = aicbsp_get_feature(&feature, NULL);
++	if (ret)
++		return ret;
+     aicwf_sdio_reg_init(sdiodev);
+ 
+ 	host = sdiodev->func->card->host;
+@@ -1797,7 +1821,9 @@
+     //u8 val;
+ 	struct aicbsp_feature_t feature;
+ 
+-	aicbsp_get_feature(&feature, NULL);
++	ret = aicbsp_get_feature(&feature, NULL);
++	if (ret)
++		return ret;
+     aicwf_sdio_reg_init(sdiodev);
+ 
+ 	host = sdiodev->func->card->host;
+@@ -1927,14 +1953,16 @@
+ 	rx_priv = aicwf_rx_init(sdiodev);
+ 	if (!rx_priv) {
+ 		sdio_err("rx init fail\n");
+-		goto fail;
++		return NULL;
+ 	}
+ 	sdiodev->rx_priv = rx_priv;
+ 
+ 	tx_priv = aicwf_tx_init(sdiodev);
+ 	if (!tx_priv) {
+ 		sdio_err("tx init fail\n");
+-		goto fail;
++		aicwf_rx_deinit(rx_priv);
++		sdiodev->rx_priv = NULL;
++		return NULL;
+ 	}
+ 	sdiodev->tx_priv = tx_priv;
+ 	aicwf_frame_queue_init(&tx_priv->txq, 8, TXQLEN);
+@@ -1986,11 +2014,12 @@
+ }
+ 
+ struct sdio_func *get_sdio_func(void){
+-    return aicbsp_sdiodev->func;
++    return aicbsp_sdiodev ? aicbsp_sdiodev->func : NULL;
+ }
+ 
+ void set_irq_handler(void *fn){
+-    aicbsp_sdiodev->sdio_hal_irqhandler = (sdio_irq_handler_t *)fn;
++    if (aicbsp_sdiodev)
++        aicbsp_sdiodev->sdio_hal_irqhandler = (sdio_irq_handler_t *)fn;
+ }
+ 
+ uint8_t crc8_ponl_107(uint8_t *p_buffer, uint16_t cal_size)
+--- a/aic8800_bsp/aicsdio_txrxif.c
++++ b/aic8800_bsp/aicsdio_txrxif.c
+@@ -29,6 +29,7 @@
+ 		return -1;
+ 	}
+ 	bus_if = dev_get_drvdata(dev);
++	if (!bus_if) return -ENODEV;
+ 	bus_if->cmd_buf = kzalloc(CMD_BUF_MAX, GFP_KERNEL);
+ 	if (!bus_if->cmd_buf) {
+ 		ret = -ENOMEM;
+@@ -44,19 +45,12 @@
+ 	bus_if->busrx_thread = kthread_run(aicwf_sdio_busrx_thread, (void *)bus_if->bus_priv.sdio->rx_priv, "aicwf_busrx_thread");
+ #endif
+ 
+-	if (IS_ERR(bus_if->bustx_thread)) {
+-		bus_if->bustx_thread  = NULL;
+-		txrx_err("aicwf_bustx_thread run fail\n");
+-		ret = -1;
+-		goto fail;
+-	}
+-
+-	if (IS_ERR(bus_if->busrx_thread)) {
+-		bus_if->busrx_thread  = NULL;
+-		txrx_err("aicwf_bustx_thread run fail\n");
+-		ret = -1;
+-		goto fail;
+-	}
++	if (IS_ERR(bus_if->bustx_thread) || IS_ERR(bus_if->busrx_thread)) {
++        if (IS_ERR(bus_if->bustx_thread)) bus_if->bustx_thread = NULL;
++        if (IS_ERR(bus_if->busrx_thread)) bus_if->busrx_thread = NULL;
++        ret = -ENOMEM;
++        goto fail;
++    }
+ 
+ 	return ret;
+ fail:
+@@ -76,6 +70,7 @@
+ 	}
+ 	sdio_dbg("%s", __func__);
+ 	bus_if = aicbsp_get_drvdata(dev);
++	if (!bus_if) return;
+ 	aicwf_bus_stop(bus_if);
+ 
+ 	sdiodev = bus_if->bus_priv.sdio;
+--- a/aic8800_fdrv/Makefile
++++ b/aic8800_fdrv/Makefile
+@@ -240,7 +240,6 @@
+ ccflags-y += -I$(srctree)
+ ccflags-y += -I$(srctree)/$(src)
+ ccflags-y += -I$(srctree)/$(src)/../aic8800_bsp
+-ccflags-y += -DCONFIG_AIC_FW_PATH=\"$(CONFIG_AIC_FW_PATH)\"
+ ccflags-$(CONFIG_RWNX_RADAR) += -DCONFIG_RWNX_RADAR
+ ccflags-$(CONFIG_RWNX_MON_DATA) += -DCONFIG_RWNX_MON_DATA
+ ccflags-$(CONFIG_RWNX_MON_XMIT) += -DCONFIG_RWNX_MON_XMIT
+--- a/aic8800_fdrv/aicwf_sdio.c
++++ b/aic8800_fdrv/aicwf_sdio.c
+@@ -548,7 +548,9 @@
+ 	int irq_flags;
+ //TODO hostwake_irq_num hostwake_irq_num and wakeup_enable
+ 
+-	aicbsp_get_feature(&aicwf_feature, NULL);
++	ret = aicbsp_get_feature(&aicwf_feature, NULL);
++	if (ret)
++		return ret;
+ 	if (aicwf_feature.irqf == 0)
+ 		flag_edge = IRQF_TRIGGER_RISING | IRQF_NO_SUSPEND;
+ 	else
+@@ -726,6 +728,8 @@
+ 	struct aicwf_bus *bus_if;
+ 	int err = -ENODEV;
+ 
++    if (!func || !func->card || !func->card->host)
++        return -ENODEV;
+     AICWFDBG(LOGDEBUG, "%s:%d\n", __func__, func->num);
+     AICWFDBG(LOGDEBUG, "Class=%x\n", func->class);
+     AICWFDBG(LOGDEBUG, "sdio vendor ID: 0x%04x\n", func->vendor);
+@@ -736,6 +740,11 @@
+ 	if (func->num != 1) {
+ 		return err;
+ 	}
++	{
++		struct aicbsp_feature_t feature;
++		if (aicbsp_get_feature(&feature, NULL))
++			return -EPROBE_DEFER;
++	}
+ 
+ 	bus_if = kzalloc(sizeof(struct aicwf_bus), GFP_KERNEL);
+ 	if (!bus_if) {
+@@ -752,6 +761,11 @@
+ 
+ 
+ 	err = aicwf_sdio_chipmatch(sdiodev, func->vendor, func->device);
++	if (err) {
++		kfree(sdiodev);
++		kfree(bus_if);
++		return -ENODEV;
++	}
+ 
+ 	sdiodev->func = func;
+ 	sdiodev->bus_if = bus_if;
+@@ -797,11 +811,17 @@
+ 	}
+ 
+ 	host->caps |= MMC_CAP_NONREMOVABLE;
+-	aicwf_rwnx_sdio_platform_init(sdiodev);
+-	aicwf_hostif_ready();
++	err = aicwf_rwnx_sdio_platform_init(sdiodev);
++	if (err) {
++		sdio_err("H96: platform init failed: %d\n", err);
++		aicwf_sdio_release(sdiodev);
++		goto fail;
++	}
+ 	err = rwnx_register_hostwake_irq(sdiodev->dev);
+-	if (err != 0)
+-		return err;
++	if (err != 0) {
++		aicwf_sdio_release(sdiodev);
++		goto fail;
++	}
+ 
+ #ifdef CONFIG_GPIO_WAKEUP
+ #ifdef CONFIG_OOB
+@@ -830,7 +850,7 @@
+ #endif//CONFIG_WIFI_SUSPEND_FOR_LINUX
+ #endif//CONFIG_GPIO_WAKEUP
+     device_disable_async_suspend(sdiodev->dev);
+-
++	aicwf_hostif_ready();
+ 	return 0;
+ fail:
+ 	aicwf_sdio_func_deinit(sdiodev);
+@@ -854,6 +874,8 @@
+ 	struct aic_sdio_dev *sdiodev = NULL;
+ 
+ 	AICWFDBG(LOGINFO, "%s Enter\n", __func__);
++	if (!func || !func->card)
++		return;
+ 	host = func->card->host;
+ 	host->caps &= ~MMC_CAP_NONREMOVABLE;
+ 	bus_if = dev_get_drvdata(&func->dev);
+@@ -891,9 +913,11 @@
+ {
+     struct rwnx_vif *rwnx_vif, *tmp;
+     struct aicwf_bus *bus_if = dev_get_drvdata(dev);
+-    struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++    struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+     
+     AICWFDBG(LOGINFO, "%s Enter", __func__);
++    if (!sdiodev || !sdiodev->rwnx_hw)
++        return;
+     list_for_each_entry_safe(rwnx_vif, tmp, &sdiodev->rwnx_hw->vifs, list) {
+             if (rwnx_vif->ndev && test_bit(RWNX_DEV_STARTED, &rwnx_vif->drv_flags)){
+                             AICWFDBG(LOGINFO, "%s rwnx_close by shutdown", __func__);
+@@ -919,13 +943,15 @@
+ {
+ 	int ret = 0;
+ 	struct aicwf_bus *bus_if = dev_get_drvdata(dev);
+-	struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++	struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ 	mmc_pm_flag_t sdio_flags;
+ 	struct rwnx_vif *rwnx_vif, *tmp;
+ 
+ 	sdio_dbg("%s enter\n", __func__);
+ 
+-	list_for_each_entry_safe(rwnx_vif, tmp, &sdiodev->rwnx_hw->vifs, list) {
++	if (!sdiodev || !sdiodev->rwnx_hw)
++        return 0;
++    list_for_each_entry_safe(rwnx_vif, tmp, &sdiodev->rwnx_hw->vifs, list) {
+ 		if (rwnx_vif->ndev)
+ 			netif_device_detach(rwnx_vif->ndev);
+ 	}
+@@ -988,7 +1014,7 @@
+ static int aicwf_sdio_resume(struct device *dev)
+ {
+ 	struct aicwf_bus *bus_if = dev_get_drvdata(dev);
+-	struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++	struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ 	struct rwnx_vif *rwnx_vif, *tmp;
+ #if defined(CONFIG_PLATFORM_ROCKCHIP) || defined(CONFIG_PLATFORM_ROCKCHIP2)
+ 	int ret;
+@@ -1004,7 +1030,9 @@
+ //	rwnx_disable_hostwake_irq();
+ //#endif
+ 	//dev_pm_clear_wake_irq(dev);
+-	list_for_each_entry_safe(rwnx_vif, tmp, &sdiodev->rwnx_hw->vifs, list) {
++	if (!sdiodev || !sdiodev->rwnx_hw)
++        return 0;
++    list_for_each_entry_safe(rwnx_vif, tmp, &sdiodev->rwnx_hw->vifs, list) {
+ 		if (rwnx_vif->ndev)
+ 			netif_device_attach(rwnx_vif->ndev);
+ 	}
+@@ -1019,7 +1047,11 @@
+ 	if(sdiodev->chipid == PRODUCT_ID_AIC8801){
+ 		sdio_dbg("%s SDIOWIFI_INTR_CONFIG_REG Enable\n", __func__);
+ 		sdio_claim_host(sdiodev->func);
+-		sdio_claim_irq(sdiodev->func, aicwf_sdio_hal_irqhandler);
++		ret = sdio_claim_irq(sdiodev->func, aicwf_sdio_hal_irqhandler);
++		if (ret) {
++			sdio_release_host(sdiodev->func);
++			return ret;
++		}
+ 
+ 		//enable sdio interrupt
+ 		ret = aicwf_sdio_writeb(sdiodev, SDIOWIFI_INTR_CONFIG_REG, 0x07);
+@@ -1387,7 +1419,7 @@
+ static void aicwf_sdio_bus_stop(struct device *dev)
+ {
+ 	struct aicwf_bus *bus_if = dev_get_drvdata(dev);
+-	struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++	struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ 	int ret = 0;
+ 
+     #if defined(CONFIG_SDIO_PWRCTRL)
+@@ -1644,7 +1676,7 @@
+     struct rwnx_txhdr *txhdr = NULL;
+     int headroom = 0;
+     struct aicwf_bus *bus_if = dev_get_drvdata(dev);
+-    struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++    struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ #ifdef CONFIG_TX_NETIF_FLOWCTRL
+ 	unsigned long flags;
+ #endif
+@@ -1698,7 +1730,7 @@
+ static int aicwf_sdio_bus_txmsg(struct device *dev, u8 *msg, uint msglen)
+ {
+ 	struct aicwf_bus *bus_if = dev_get_drvdata(dev);
+-	struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++	struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ 
+ 	down(&sdiodev->tx_priv->cmd_txsema);
+ 	sdiodev->tx_priv->cmd_txstate = true;
+@@ -1890,7 +1922,7 @@
+ static int aicwf_sdio_bus_start(struct device *dev)
+ {
+ 	struct aicwf_bus *bus_if = dev_get_drvdata(dev);
+-	struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++	struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ 	int ret = 0;
+ 
+ 
+@@ -2311,7 +2343,7 @@
+ void aicwf_sdio_hal_irqhandler(struct sdio_func *func)
+ {
+ 	struct aicwf_bus *bus_if = dev_get_drvdata(&func->dev);
+-	struct aic_sdio_dev *sdiodev = bus_if->bus_priv.sdio;
++	struct aic_sdio_dev *sdiodev = bus_if ? bus_if->bus_priv.sdio : NULL;
+ 	u8 intstatus = 0;
+ 	u8 byte_len = 0;
+ 	#ifdef CONFIG_PREALLOC_RX_SKB
+@@ -2560,7 +2592,9 @@
+ 	struct aicbsp_feature_t feature;
+ 	//u8 val = 0;
+ 
+-	aicbsp_get_feature(&feature, NULL);
++	ret = aicbsp_get_feature(&feature, NULL);
++	if (ret)
++		return ret;
+     aicwf_sdio_reg_init(sdiodev);
+ 
+ 	host = sdiodev->func->card->host;
+@@ -2680,7 +2714,9 @@
+ 	//u8 val = 0;
+     u8 val1 = 0;
+ 
+-	aicbsp_get_feature(&feature, NULL);
++	ret = aicbsp_get_feature(&feature, NULL);
++	if (ret)
++		return ret;
+     aicwf_sdio_reg_init(sdiodev);
+ 
+ 	host = sdiodev->func->card->host;
+@@ -2813,14 +2849,16 @@
+ 	rx_priv = aicwf_rx_init(sdiodev);
+ 	if (!rx_priv) {
+ 		sdio_err("rx init fail\n");
+-		goto fail;
++		return NULL;
+ 	}
+ 	sdiodev->rx_priv = rx_priv;
+ 
+ 	tx_priv = aicwf_tx_init(sdiodev);
+ 	if (!tx_priv) {
+ 		sdio_err("tx init fail\n");
+-		goto fail;
++		aicwf_rx_deinit(rx_priv);
++		sdiodev->rx_priv = NULL;
++		return NULL;
+ 	}
+ 	sdiodev->tx_priv = tx_priv;
+ 	aicwf_frame_queue_init(&tx_priv->txq, 8, TXQLEN);
+@@ -2844,6 +2882,7 @@
+ #endif
+ 	if (IS_ERR(sdiodev->pwrctl_tsk)) {
+ 		sdiodev->pwrctl_tsk = NULL;
++		goto fail;
+ 	}
+ #endif
+ #ifdef CONFIG_TX_NETIF_FLOWCTRL
+--- a/aic8800_fdrv/aicwf_txrxif.c
++++ b/aic8800_fdrv/aicwf_txrxif.c
+@@ -82,6 +82,7 @@
+ 		return -1;
+ 	}
+ 	bus_if = dev_get_drvdata(dev);
++	if (!bus_if) return -ENODEV;
+ 	bus_if->cmd_buf = kzalloc(CMD_BUF_MAX, GFP_KERNEL);
+ 	if (!bus_if->cmd_buf) {
+ 		ret = -ENOMEM;
+@@ -110,17 +111,12 @@
+ 	bus_if->busrx_thread = kthread_run(usb_busrx_thread, (void *)bus_if->bus_priv.usb->rx_priv, "aicwf_busrx_thread");
+ #endif
+ 
+-	if (IS_ERR(bus_if->bustx_thread)) {
+-		bus_if->bustx_thread  = NULL;
+-		txrx_err("aicwf_bustx_thread run fail\n");
+-		goto fail;
+-	}
+-
+-	if (IS_ERR(bus_if->busrx_thread)) {
+-		bus_if->busrx_thread  = NULL;
+-		txrx_err("aicwf_bustx_thread run fail\n");
+-		goto fail;
+-	}
++	if (IS_ERR(bus_if->bustx_thread) || IS_ERR(bus_if->busrx_thread)) {
++        if (IS_ERR(bus_if->bustx_thread)) bus_if->bustx_thread = NULL;
++        if (IS_ERR(bus_if->busrx_thread)) bus_if->busrx_thread = NULL;
++        ret = -ENOMEM;
++        goto fail;
++    }
+ 
+ 	return ret;
+ fail:
+@@ -145,6 +141,7 @@
+ 	}
+ 	AICWFDBG(LOGINFO, "%s Enter\r\n", __func__);
+ 	bus_if = dev_get_drvdata(dev);
++	if (!bus_if) return;
+ 	aicwf_bus_stop(bus_if);
+ 
+ #ifdef AICWF_USB_SUPPORT
+--- a/aic8800_fdrv/rwnx_main.c
++++ b/aic8800_fdrv/rwnx_main.c
+@@ -5454,7 +5454,9 @@
+ 	RWNX_DBG(RWNX_FN_ENTRY_STR);
+ 
+ 	memset(fw_path, 0, 200);
+-	aicbsp_get_feature(&feature, fw_path);
++	ret = aicbsp_get_feature(&feature, fw_path);
++	if (ret)
++		return ret;
+ 
+ 	get_random_bytes(&dflt_mac[4], 2);
+ 
+@@ -5530,6 +5532,10 @@
+         rwnx_hw->txq = (struct rwnx_txq*)aicwf_prealloc_txq_alloc(sizeof(struct rwnx_txq)*NX_NB_TXQ);
+ #endif
+ 
++	if (!rwnx_hw->txq) {
++		ret = -ENOMEM;
++		goto err_txq;
++	}
+ 	for (i = 0; i < NX_NB_TXQ; i++) {
+ 		rwnx_hw->txq[i].idx = TXQ_INACTIVE;
+ 	}
+@@ -5553,7 +5559,8 @@
+ 	rwnx_hw->apmStaloss_wq = create_singlethread_workqueue("apmStaloss_wq");
+ 	if (!rwnx_hw->apmStaloss_wq) {
+ 		txrx_err("insufficient memory to create apmStaloss workqueue.\n");
+-		goto err_cache;
++		ret = -ENOMEM;
++		goto err_txq;
+ 	}
+ 
+ 	wiphy->mgmt_stypes = rwnx_default_mgmt_stypes;
+@@ -5590,9 +5597,12 @@
+ 	rwnx_hw->band_5g_support = set_start_cfm.is_5g_support;
+ 	rwnx_hw->vendor_info = (feature.hwinfo < 0) ? set_start_cfm.vendor_info : feature.hwinfo;
+ 
++	memset(&fw_version, 0, sizeof(fw_version));
+ 	ret = rwnx_send_get_fw_version_req(rwnx_hw, &fw_version);
++	if (ret)
++		goto err_lmac_reqs;
+ 	memcpy(wiphy->fw_version, fw_version.fw_version, fw_version.fw_version_len>32? 32 : fw_version.fw_version_len);
+-	AICWFDBG(LOGINFO, "Firmware Version: %s\r\n", fw_version.fw_version);
++	AICWFDBG(LOGINFO, "Firmware Version: %.32s\r\n", fw_version.fw_version);
+ 
+ 	wiphy->bands[NL80211_BAND_2GHZ] = &rwnx_band_2GHz;
+ 	if (rwnx_hw->band_5g_support)
+@@ -5736,7 +5746,9 @@
+ 		((rwnx_hw->sdiodev->chipid == PRODUCT_ID_AIC8800DC||
+ 		 rwnx_hw->sdiodev->chipid == PRODUCT_ID_AIC8800DW ||
+ 		 rwnx_hw->sdiodev->chipid == PRODUCT_ID_AIC8800D80) && testmode == 0)){
+-		rwnx_send_me_config_req(rwnx_hw);
++		ret = rwnx_send_me_config_req(rwnx_hw);
++		if (ret)
++			goto err_lmac_reqs;
+ 	}
+ 
+ 	/* Only monitor mode supported when custom channels are enabled */
+@@ -5761,7 +5773,9 @@
+ 		((rwnx_hw->sdiodev->chipid == PRODUCT_ID_AIC8800DC ||
+ 		rwnx_hw->sdiodev->chipid == PRODUCT_ID_AIC8800DW ||
+ 		rwnx_hw->sdiodev->chipid == PRODUCT_ID_AIC8800D80) && testmode == 0)) {
+-    	rwnx_send_me_chan_config_req(rwnx_hw);
++    	ret = rwnx_send_me_chan_config_req(rwnx_hw);
++		if (ret)
++			goto err_channels;
+ 	}
+ 
+ 	*platform_data = rwnx_hw;
+@@ -5807,7 +5821,8 @@
+ 	/* Add an initial p2p0 interface */
+ 	vif = rwnx_interface_add(rwnx_hw, "p2p%d", NET_NAME_UNKNOWN,
+ 								NL80211_IFTYPE_STATION, NULL);
+-	vif->is_p2p_vif = 1;
++	if (vif)
++		vif->is_p2p_vif = 1;
+ 	rtnl_unlock();
+ 
+ 	if (!vif) {
+@@ -5839,6 +5854,7 @@
+ 	rwnx_dbgfs_unregister(rwnx_hw);
+ err_debugfs:
+ #endif
++err_channels:
+ 	wiphy_unregister(rwnx_hw->wiphy);
+ err_register_wiphy:
+ err_lmac_reqs:
+@@ -5846,6 +5862,11 @@
+ 	rwnx_platform_off(rwnx_hw, NULL);
+ //err_platon:
+ //err_config:
++	if (rwnx_hw->apmStaloss_wq) {
++		destroy_workqueue(rwnx_hw->apmStaloss_wq);
++		rwnx_hw->apmStaloss_wq = NULL;
++	}
++err_txq:
+ 	kmem_cache_destroy(rwnx_hw->sw_txhdr_cache);
+ err_cache:
+     aicwf_wakeup_lock_deinit(rwnx_hw);
+@@ -5950,6 +5971,7 @@
+ 	if (aicbsp_set_subsys(AIC_WIFI, AIC_PWR_ON) < 0) {
+ 		AICWFDBG(LOGERROR, "%s, set power on fail!\n", __func__);
+ 		if(!aicbsp_get_load_fw_in_fdrv()){
++			rwnx_free_cmd_array();
+ 			return -ENODEV;
+ 		}
+ 	}
+@@ -5967,6 +5989,7 @@
+ 		aicwf_usb_exit();
+ #endif /*AICWF_USB_SUPPORT */
+         aicbsp_set_subsys(AIC_WIFI, AIC_PWR_OFF);
++		rwnx_free_cmd_array();
+ 		return -ENODEV;
+ 	}
+ 
+--- a/aic8800_fdrv/sdio_host.c
++++ b/aic8800_fdrv/sdio_host.c
+@@ -131,7 +131,11 @@
+ 
+ 	rwnx_plat->sdiodev = sdiodev;
+ 	ret = rwnx_platform_init(rwnx_plat, &drvdata);
+-
++	if (ret) {
++		g_rwnx_plat = NULL;
++		sdiodev->rwnx_hw = NULL;
++		kfree(rwnx_plat);
++	}
+ 	return ret;
+ }
+ 

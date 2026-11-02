@@ -1,0 +1,13 @@
+# CONFIG_SDIO_PWRCTRL=n candidate, 2026-11-02
+
+## Boot result
+
+User rebooted; boot ID `3e35e348-3c4d-4cda-bcb4-20a629958c1e`. Ethernet and wlan0 are present, but forced scan returns no APs. Both installed hashes match candidates. Loaded module build IDs match candidates: BSP `c2ee76b27e08bf1a8e309c7b96389f4879461406`, FDRV `5606dd725d5991c559bb2ff30c8ce3e9b528dfcf`. No wakeup-fail message, but CMD52 flow-control register 0x0a still times out with -110, followed by MM_START_REQ failure. Host log confirms requested 10 MHz and actual 9.96 MHz, so this boot provides a valid low-clock test unlike the earlier 10 MHz attempt. Disabling power control in both modules is not sufficient to restore scanning. Logs saved in `boot-test/`. Candidate modules remain installed.
+
+Built BSP and FDRV with SDIO power control disabled in both Makefiles. The baseline source was reconstructed from the local kernel worktree, restoring its NONREMOVABLE cap operations and setting FEATURE_SDIO_CLOCK to 10000000 as in the installed BSP. Baseline srcversions match the running modules: BSP `4A07DDF04DEA2E152DC0447`, FDRV `C4F50BB260C38F517AD7638`. This clock constant does not prove the actual bus rate; previous tests observed 25 MHz.
+
+Headers .config SHA-256 matches the running kernel: `10d9a538f42ffe441426e2616c3b5d99cb190e6586ff0a7960fce7a3d096b179`. Built using aarch64-linux-gnu-gcc-14. Host tools fixdep, modpost and genksyms copied from the existing kernel worktree into extracted headers. Full build workspace/logs: `/home/nguyentiem/h96-pwrctrl-off-20261102/` on the build computer.
+
+Validation: build succeeded, vermagic matches baseline, common imported symbol CRCs match baseline, compile commands omit `-DCONFIG_SDIO_PWRCTRL`. FDRV candidate has no aicwf_sdio_wakeup, aicwf_sdio_sleep_allow or aicwf_sdio_pwr_stctl symbols, unlike baseline. Srcversion alone does not distinguish these builds because it can remain unchanged when a Makefile compile flag changes.
+
+Package copied to `/home/nguyentiem/h96-pwrctrl-off-20261102/` on the box; SHA256SUMS verified there. Installed successfully with user-authorized sudo on 2026-11-02 at approximately 17:49 box time. Script checked the prior installed hashes, backed up the pair to `/var/backups/h96-wifi-pwrctrl-off-20261102/`, installed the candidates, ran depmod and sync, and exited 0. Installed BSP SHA-256 `d2e8f25ceee9627ca96624eae46700e1780fd1fc3ec9b5f964c67d91a88f6fa7`; FDRV `7afc97f3d509e022e9dc3bf073e6877ba82a7d5cbab8434b52b6191e4e9bf9c9`. Both match the package. `restore` restores the backup for a subsequent boot. Ethernet remains connected. No DTB or network profile changes; no hot reload or reboot performed. Awaiting user reboot and runtime test.

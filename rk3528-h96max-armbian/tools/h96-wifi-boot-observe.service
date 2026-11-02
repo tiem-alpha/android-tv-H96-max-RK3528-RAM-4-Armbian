@@ -1,0 +1,14 @@
+[Unit]
+Description=Passively collect Wi-Fi boot trace and configuration changes
+DefaultDependencies=no
+After=h96-wifi-trace-arm.service
+Wants=h96-wifi-trace-arm.service
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /usr/local/sbin/h96-wifi-boot-observe.py
+TimeoutStopSec=5
+Nice=5
+
+[Install]
+WantedBy=sysinit.target

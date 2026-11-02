@@ -1,0 +1,52 @@
+--- a/Makefile
++++ b/Makefile
+@@ -10,7 +10,7 @@
+ 
+ ########## config option ##########
+ export CONFIG_USE_FW_REQUEST = n
+-export CONFIG_PREALLOC_RX_SKB = y
++export CONFIG_PREALLOC_RX_SKB = n
+ export CONFIG_PREALLOC_TXQ = y
+ export CONFIG_OOB = n
+ export CONFIG_GPIO_WAKEUP = n
+@@ -22,7 +22,7 @@
+ export CONFIG_PLATFORM_ROCKCHIP2 = n
+ export CONFIG_PLATFORM_ALLWINNER = n
+ export CONFIG_PLATFORM_AMLOGIC = n
+-export CONFIG_PLATFORM_UBUNTU = y
++export CONFIG_PLATFORM_UBUNTU = n
+ 
+ ifeq ($(CONFIG_PLATFORM_ROCKCHIP), y)
+ ARCH = arm64
+--- a/aic8800_bsp/Makefile
++++ b/aic8800_bsp/Makefile
+@@ -1,6 +1,6 @@
+ CONFIG_SDIO_SUPPORT := y
+ CONFIG_SDIO_PWRCTRL := y
+-CONFIG_AIC_FW_PATH = "/usr/lib/firmware"
++CONFIG_AIC_FW_PATH = "/lib/firmware/aic8800-gtx-a870f7f/SDIO/aic8800"
+ #CONFIG_AIC_FW_PATH = "/lib/firmware/aic8800"
+ export CONFIG_AIC_FW_PATH
+ ccflags-y += -DCONFIG_AIC_FW_PATH=\"$(CONFIG_AIC_FW_PATH)\"
+--- a/aic8800_bsp/aic_bsp_driver.h
++++ b/aic8800_bsp/aic_bsp_driver.h
+@@ -339,7 +339,7 @@
+ int aicbsp_resv_mem_init(void);
+ int aicbsp_resv_mem_deinit(void);
+ 
+-#define AICBSP_FW_PATH              CONFIG_AIC_FW_PATH
++#define AICBSP_FW_PATH              "/lib/firmware/aic8800-gtx-a870f7f/SDIO/aic8800"
+ #define AICBSP_FW_PATH_MAX          200
+ 
+ #define RAM_FMAC_FW_ADDR                    0x00120000
+--- a/aic8800_bsp/aicsdio.c
++++ b/aic8800_bsp/aicsdio.c
+@@ -58,7 +58,7 @@
+ //#ifdef CONFIG_PLATFORM_UBUNTU
+ //static const char* aic_default_fw_path = "/lib/firmware/aic8800_sdio";
+ //#else
+-static const char* aic_default_fw_path = CONFIG_AIC_FW_PATH;
++static const char* aic_default_fw_path = "/lib/firmware/aic8800-gtx-a870f7f/SDIO/aic8800";
+ //#endif
+ char aic_fw_path[FW_PATH_MAX];
+ module_param_string(aic_fw_path, aic_fw_path, FW_PATH_MAX, 0660);

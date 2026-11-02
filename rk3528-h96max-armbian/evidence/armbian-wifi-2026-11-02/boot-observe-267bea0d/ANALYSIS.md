@@ -1,0 +1,23 @@
+# Boot observation findings
+
+Next trial staged on 2026-11-02 around 23:06 box time: masked armbian-led-state.service without --now, left pwr-wifi brightness=1, driver hashes unchanged, rearmed exactly the same boot trace options (hash checked against previous staged config). Backup /var/backups/h96-no-led-restore-20261102 contains original boot config, saved LED config and prior service enable state. Trace collector will restore original boot options/disable itself after collection; LED restore remains masked until evaluated. Undo the LED change with sudo systemctl unmask armbian-led-state.service (original enable link retained). Awaiting user reboot.
+
+Boot ID 267bea0d-2591-4b20-bc2b-517aa664b9bc. All per-CPU overrun/dropped/commit-overrun counters are zero. Collector ran before AIC loading and saved logs; original boot options restored and services disabled after collection. Report times below use trace.txt's global trace clock. Do not directly substitute dmesg timestamps: saved printk timestamps differ from trace/snapshot time in this boot. MMC completion task names may belong to the interrupted process, not the submitter; e.g. rsyslog/ModemManager on IRQ completion do not identify the cause.
+
+## Configuration and GPIO
+
+- dw_mci_set_ios argument probes at 20.666212 and 21.256745: clock=50000000, vdd=21, bus_mode=2, power_mode=2, bus_width=2 (4-bit), timing=0, signal_voltage=0 (3.3 V). No further captured set_ios calls before failure. IOS snapshots remain unchanged through collection.
+- SDIO GPIO1 pins 32..37, host wake 39, 32k pin 51 and reset 132 retain their mux. Reset GPIO132 is released high after initial enumeration; no set/direction event after initialization before error. Early enumeration at ~4s includes normal reset cycles and transient MMC errors, distinct from the later runtime failure.
+- Relevant clock summaries unchanged except UART2 clock enable at 34.854. clk_32k remains enabled 32768 Hz; SDIO hclk/ciu and drive/sample rate/phase unchanged. The configured power:clock_* events did not produce matching SDIO/UART/32k entries; do not interpret absence as proof every short-lived CCF clock gate transition was captured. Snapshots can miss sub-250ms changes; software state does not measure voltage physically.
+- GPIO38 (DTB gpio-leds pwr-wifi) is written by armbian-led-state: high 43.843148, low 43.866467, high 43.870703. Low pulse about 4.236ms, about 1.122s before first runtime timeout. This is the only recorded relevant GPIO output change close before failure. Source /usr/lib/armbian/armbian-led-state-restore.sh explicitly sets trigger default-on then none when restoring trigger=none, which can produce such a pulse. DT declaration identifies LED usage, not physical wiring proof; causation and whether it affects chip supply remain unproven. A controlled next-boot trial skipping this LED restore is needed before asserting it causes failure.
+- Pin mux changes at 54.242 are GPIO4 display pins 147/148, after runtime CMD52 errors. No captured change of Wi-Fi reset/SDIO pins in that interval.
+
+## Bluetooth
+
+GPIO49 BT reset is low from early initialization, no later write before Wi-Fi failure. bt_default rfkill soft=1; hci0 appears soft=1. GPIO48/50 state and pinmux stable in snapshots. hciattach configures UART at 35.060110 (9600), 35.060439 (9600 with cflag change), 35.060528 (1500000 with flow-control flags). UART2 clock enables around 34.854. No UART termios change at runtime CMD52 failure. Service invokes hciattach -n -s 1500000 /dev/ttyS2 any 1500000 flow nosleep. Bluetooth changes precede the error but causation is not established.
+
+## Decoded CMD52 sequence
+
+22.669738: function1 write reg0x09=0x01 succeeds (wake); read wake/flow control and CMD53 TX/RX succeed through 22.670600. At 22.709991 function2 write reg0x09=0x02 succeeds; at 22.710054 read reg0x09 returns successfully. Source aicwf_sdio_sleep_allow uses that function2 write/read handshake for sleep. No further MMC2 transactions until 44.988483. At 44.988483 function1 write reg0x09=0x01 times out -110; first subsequent read of function1 reg0x0a also times out. The error response bits from failed commands must not be treated as valid chip responses.
+
+Evidence now establishes a successful sleep handshake followed by a failing later wake, with stable captured host IOS/reset/pinmux and one pwr-wifi LED GPIO pulse just before wake. It does not establish whether LED pulse, firmware sleep, physical power/clock integrity or host behavior caused chip nonresponse. Earlier driver power-control-disabled tests still failed, so sleep alone is not a proven explanation across configurations.

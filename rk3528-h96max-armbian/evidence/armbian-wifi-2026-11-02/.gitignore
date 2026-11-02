@@ -1,0 +1,11 @@
+# Keep source patches, manifests and written findings. Generated artifacts stay local.
+*.ko
+*.bin
+*.pyc
+*.log
+*.txt
+*.json
+*.jsonl
+*.dts
+firmware/
+boot-test/

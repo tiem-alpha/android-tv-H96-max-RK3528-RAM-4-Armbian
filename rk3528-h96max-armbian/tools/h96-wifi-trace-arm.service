@@ -1,0 +1,13 @@
+[Unit]
+Description=Filter passive Wi-Fi boot trace before AIC module loading
+DefaultDependencies=no
+Before=systemd-modules-load.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /usr/local/sbin/h96-wifi-trace-arm.sh
+RemainAfterExit=yes
+TimeoutStartSec=8
+
+[Install]
+WantedBy=sysinit.target

@@ -1,3 +1,4 @@
 /armbian-build
 /patches/userpatches/overlay/lib/firmware/aic8800/
 /patches/userpatches/overlay/h96-fd655/
+__pycache__/

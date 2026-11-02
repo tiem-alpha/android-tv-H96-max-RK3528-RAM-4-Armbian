@@ -1,0 +1,9 @@
+# GTX RX preallocation trial
+
+Boot tested: boot ID 4ac8c4c8-0158-4842-b640-88c30b0fb28d. Loaded build IDs match package: BSP 8eeb952bf617c4fcd0824b674428fb7be9dccd1a; FDRV ea39aa0a951466dfa01c7fb8008b8cec4c8ae717. Ethernet/SSH and wlan0 remain available, no observed NULL/Oops. At 32.78 seconds prealloc init allocates 30 RX buffers and firmware version is read successfully. Wake fails at 45.97 seconds, followed by buffer_cnt=-1 and MM_START_REQ timeout at 52.14 seconds. Forced scan returns no APs. Enabling RX preallocation alone does not fix Wi-Fi. Full kernel log in boot-test/kernel.txt. RX preallocation remains enabled on box.
+
+Based on the boot-tested gtx-nullguard candidate. The only source change is top-level Makefile CONFIG_PREALLOC_RX_SKB=n -> y, restoring the GTX upstream setting. Source .c/.h and other Makefiles were compared and match the previous candidate. Matched GTX firmware, 50 MHz and SDIO power control remain unchanged.
+
+Built at /home/nguyentiem/h96-gtx-rxprealloc-port with matching 6.1.172-vendor-rk35xx headers and GCC 14. Build succeeded; vermagic and every imported symbol CRC checked. FDRV compile commands contain -DCONFIG_PREALLOC_RX_SKB, absent in the baseline. SHA256SUMS identifies the resulting pair.
+
+Installed on box in /lib/modules/6.1.172-vendor-rk35xx; installed hashes match package: BSP 33b10d87c99e0eebd0c931d1a514bf4d6312dfe79d42cfdb37f27a0f4c6a7914, FDRV 7667c62bfc6280642e516e4a8dfc7b0b86881b5b70e8c81104bfaf193135a898. Backup of boot-tested nullguard modules at /var/backups/h96-wifi-rxprealloc-20261102. Package on box /home/nguyentiem/h96-gtx-rxprealloc-20261102. Restore with sudo bash /home/nguyentiem/h96-gtx-rxprealloc-20261102/stage-rxprealloc.sh restore and boot again. No hot reload or automatic reboot. Runtime result pending user reboot.

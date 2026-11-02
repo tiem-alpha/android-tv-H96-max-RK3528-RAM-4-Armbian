@@ -1,0 +1,4 @@
+p:h96_wifi/mmc_ios dw_mci_set_ios host=%x0 ios=%x1 clock=+0(%x1):u32 vdd=+4(%x1):u16 bus_mode=+12(%x1):u8 power_mode=+14(%x1):u8 bus_width=+15(%x1):u8 timing=+16(%x1):u8 signal_voltage=+17(%x1):u8
+p:h96_wifi/pinmux rockchip_pmx_set controller=%x0 selector=%x1:u32 group=%x2:u32
+p:h96_wifi/pin_mux rockchip_set_mux bank=%x0 pin=%x1:u32 mux=%x2:u32
+p:h96_wifi/uart_termios serial8250_do_set_termios port=%x0 termios=%x1 cflag=+8(%x1):u32 ispeed=+36(%x1):u32 ospeed=+40(%x1):u32

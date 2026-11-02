@@ -1,5 +1,9 @@
 # Nhật ký lỗi Wi‑Fi AIC8801 trên H96 Max RK3528
 
+## Cập nhật 02/11/2026: đã scan, kết nối và truyền dữ liệu được
+
+Hai boot đối chiếu cùng driver GTX cho thấy `armbian-led-state.service` tạo xung thấp ~4,236 ms trên GPIO38 (`pwr-wifi`) trước lỗi wake SDIO. Mask riêng service này, giữ nguyên driver/firmware/DTB, giúp box tự kết nối, có DHCP và ping gateway/Internet qua `wlan0` thành công. Hiện giữ service LED masked. Chưa đo được vai trò điện vật lý GPIO38 hoặc kiểm tra ổn định dài hạn. Xem [kết quả, cấu hình và giới hạn](WIFI_GPIO38_LED_RESTORE_FIX_2026-11-02.md). Phần bên dưới là lịch sử điều tra trước phát hiện này.
+
 Cập nhật: 01/11/2026. Đây là kết quả trên **box đang chạy Armbian từ thẻ SD**, kernel `6.1.172-vendor-rk35xx`. Không suy diễn kết quả từ box RK3528 khác.
 
 ## Triệu chứng và trạng thái hiện tại
