@@ -2,11 +2,15 @@
 set -e
 
 # Armbian runs this inside the target rootfs; overlay is supplied by the build.
-factory_fw=/tmp/overlay/lib/firmware/aic8800/SDIO/aic8800D80
-if [[ -d "$factory_fw" ]]; then
-	mkdir -p /lib/firmware/aic8800/SDIO/aic8800D80
-	cp -a "$factory_fw"/. /lib/firmware/aic8800/SDIO/aic8800D80/
-fi
+source /tmp/overlay/h96-radio.conf
+gtx_fw="/tmp/overlay${H96_AIC_FW_DIR}"
+[[ -s "$gtx_fw/SHA256SUMS" ]] || { echo "Missing GTX firmware: $gtx_fw" >&2; exit 1; }
+(cd "$gtx_fw" && sha256sum -c SHA256SUMS)
+mkdir -p "${H96_AIC_FW_DIR}"
+cp -a "$gtx_fw"/. "${H96_AIC_FW_DIR}/"
+# Keep GPIO38 high; LED state restore generated a pulse that broke Wi-Fi.
+mkdir -p /etc/systemd/system
+ln -sfn /dev/null /etc/systemd/system/armbian-led-state.service
 
 led_files=/tmp/overlay/h96-fd655
 

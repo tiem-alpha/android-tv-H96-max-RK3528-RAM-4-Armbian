@@ -9,6 +9,14 @@ if [[ ! -x "${build_dir}/compile.sh" ]]; then
 	exit 1
 fi
 
+if [[ $(git -C "${build_dir}" rev-parse --show-toplevel 2>/dev/null || true) != "${build_dir}" ]]; then
+	echo "${build_dir} is not an Armbian Git checkout; clone armbian/build there first." >&2
+	exit 1
+fi
+
+# Prepare the exact same firmware revision as the kernel driver, automatically.
+bash "${repo_dir}/tools/prepare-aic8800-gtx.sh"
+
 if [[ "$(uname -m)" != "aarch64" ]]; then
 	command -v docker >/dev/null || { echo "Docker is required for ARM64 build" >&2; exit 1; }
 	if [[ ! -r /proc/sys/fs/binfmt_misc/qemu-aarch64 ]] ||
@@ -25,10 +33,8 @@ for file in \
 	[[ -s "${file}" ]] || { echo "Missing ${file}" >&2; exit 1; }
 done
 
-for firmware in fw_adid.bin fw_patch.bin fw_patch_table.bin fmacfw.bin aic_userconfig.txt; do
-	file="${repo_dir}/patches/userpatches/overlay/lib/firmware/aic8800/SDIO/aic8800D80/${firmware}"
-	[[ -s "${file}" ]] || { echo "Missing ${file}" >&2; exit 1; }
-done
+source "${repo_dir}/patches/config/h96-aic8800.conf"
+(cd "${repo_dir}/patches/userpatches/overlay${H96_AIC_FW_DIR}" && sha256sum -c SHA256SUMS)
 
 led_overlay="${repo_dir}/patches/userpatches/overlay/h96-fd655"
 for file in h96-fd655.py h96-fd655.service h96-fd655.json; do

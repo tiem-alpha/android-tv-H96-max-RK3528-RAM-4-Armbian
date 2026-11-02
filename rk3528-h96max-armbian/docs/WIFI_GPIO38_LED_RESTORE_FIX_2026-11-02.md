@@ -54,7 +54,7 @@ brightness=1
 - FDRV SHA-256: `7667c62bfc6280642e516e4a8dfc7b0b86881b5b70e8c81104bfaf193135a898`.
 - [Patch port đầy đủ trước RX preallocation](../evidence/armbian-wifi-2026-11-02/gtx-nullguard/full-port.patch), sau đó áp [patch RX preallocation](../evidence/armbian-wifi-2026-11-02/gtx-rxprealloc/rxprealloc.patch).
 
-Kết quả này chưa chứng minh driver gốc cũng hoạt động chỉ bằng mask LED; hai boot đối chiếu dùng đúng cùng cặp GTX đã sửa. Cấu hình build image trong repo vẫn ghim nhánh driver trước đó; chưa tích hợp cặp GTX hoặc mask LED vào pipeline tạo image mặc định.
+Kết quả này chưa chứng minh driver gốc cũng hoạt động chỉ bằng mask LED; hai boot đối chiếu dùng đúng cùng cặp GTX đã sửa. Pipeline build image hiện đã ghim source GTX, áp hai patch trên, lấy đúng bộ firmware và mask service LED ngay từ image. Bluetooth được cấu hình bỏ soft-block và BlueZ AutoEnable. Chưa xác nhận một image vừa rebuild trên phần cứng.
 
 ## Giới hạn và dữ liệu lưu
 
