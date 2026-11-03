@@ -1,37 +1,37 @@
-# Wi-Fi hoạt động khi chặn xung GPIO38 từ service LED
+# Wi-Fi works when the LED-restore pulse on GPIO38 is blocked
 
-Ngày kiểm tra: 02/11/2026, trên H96 Max RK3528 của dự án, boot Armbian từ SD, kernel `6.1.172-vendor-rk35xx`. Đây là kết quả hai lần boot đối chiếu; chưa phải phép đo điện hoặc kiểm tra độ ổn định dài hạn.
+Tested on 2026-11-02 on the project's H96 Max RK3528, booting Armbian from SD with kernel `6.1.172-vendor-rk35xx`. These are paired-boot results, not electrical measurements or long-duration reliability tests.
 
-## Kết quả và cách giữ cấu hình đang hoạt động
+## Working configuration
 
-Giữ `armbian-led-state.service` ở trạng thái **masked**. Service này restore LED `pwr-wifi` trên GPIO1_PA6 (GPIO38), tạo xung xuống thấp ngay trước lúc Wi-Fi mất phản hồi. Sau khi chặn service, giữ nguyên driver/firmware/DTB, box tự kết nối Wi-Fi, nhận DHCP, scan và truy cập Internet thành công.
+Keep `armbian-led-state.service` **masked**. It restores the `pwr-wifi` LED on GPIO1_PA6 (GPIO38) and generated a brief low pulse immediately before Wi-Fi stopped responding. Blocking that service while retaining the same driver/firmware/DTB let the box auto-connect, obtain DHCP, scan and reach the Internet.
 
-Áp dụng trên box tương ứng, rồi reboot:
+On the corresponding box:
 
 ```sh
 sudo systemctl mask armbian-led-state.service
 sudo reboot
 ```
 
-Lệnh mask không có `--now`: không tác động GPIO trong phiên đang chạy. Không thử bật/tắt brightness hoặc trigger của `pwr-wifi` khi đang kiểm tra Wi-Fi. GPIO4_PA4/GPIO132 là chân reset Wi-Fi khác với GPIO38. DTB khai báo GPIO38 là LED; kết quả hiện tại chưa xác định chân đó thực tế ảnh hưởng nguồn, enable hay phần mạch nào.
+Masking deliberately omits `--now`, so it does not change GPIO state in the current session. Do not change `pwr-wifi` brightness or trigger during the test. Wi-Fi reset GPIO4_PA4/GPIO132 is a different pin. Although the DTB labels GPIO38 as an LED, these results do not establish whether it physically controls supply, enable or another circuit.
 
-## Hai lần boot đối chiếu
+## Paired boots
 
-| Mục | Restore LED hoạt động | Restore LED bị chặn |
+| Item | LED restore active | LED restore blocked |
 | --- | --- | --- |
 | Boot ID | `267bea0d-2591-4b20-bc2b-517aa664b9bc` | `0713d6f3-86b8-4498-95de-4f50e01a3209` |
-| GPIO38 | `1 → 0 → 1`, thấp khoảng 4,236 ms | Chỉ set mức cao ở init, không có xung thấp sau đó |
-| Lần wake tiếp theo | CMD52 ghi function 1, reg `0x09=1` trả `-110` khoảng 1,122 s sau xung thấp | Không ghi nhận lỗi CMD52 trong giai đoạn Wi-Fi chạy |
-| Scan/kết nối | Scan rỗng, `MM_START_REQ` timeout | Scan thấy nhiều AP; tự liên kết profile đã lưu |
-| DHCP và truyền dữ liệu | Chưa kết nối | Có DHCP; ping gateway và Internet qua riêng `wlan0` thành công |
-| Kernel | Không thấy NULL/Oops ở bản có guard | Không thấy wake fail, command timeout, queue crash hoặc Oops |
-| Trace | Không mất/tràn bản ghi | Không mất/tràn bản ghi |
+| GPIO38 | `1 → 0 → 1`; low for about 4.236 ms | Initial high only; no later low pulse |
+| Next wake | Function-1 CMD52 write `0x09=1` returned -110 about 1.122 s after pulse | No CMD52 error recorded during working Wi-Fi |
+| Scan/association | Empty scan, `MM_START_REQ` timeout | Many APs, automatic association with saved profile |
+| DHCP/traffic | No connection | DHCP and gateway/Internet ping explicitly over `wlan0` |
+| Kernel | No NULL/Oops in guarded candidate | No wake/command timeout, queue crash or Oops |
+| Trace | No lost/overrun records | No lost/overrun records |
 
-Kiểm tra truyền dữ liệu dùng `ping -I wlan0`, tránh nhầm lưu lượng Ethernet. Lượt kiểm tra ngắn có 3/3 phản hồi từ gateway Wi-Fi và 3/3 từ Internet, không mất gói.
+Traffic checks used `ping -I wlan0` to avoid confusing Ethernet traffic with Wi-Fi. Gateway and Internet each returned 3/3 replies with no loss in these short tests.
 
-## Vì sao service LED tạo xung
+## Why restoring an LED creates a pulse
 
-`/etc/armbian-leds.conf` lưu:
+`/etc/armbian-leds.conf` contained:
 
 ```ini
 [/sys/class/leds/pwr-wifi]
@@ -39,39 +39,39 @@ trigger=none
 brightness=1
 ```
 
-`/usr/lib/armbian/armbian-led-state-restore.sh` có workaround: khi restore `trigger=none`, nó ghi `default-on`, sau đó ghi `none` rồi restore brightness. Trace thấy chính tiến trình `armbian-led-state` kéo GPIO38 thấp trong chuỗi này.
+`/usr/lib/armbian/armbian-led-state-restore.sh` uses a workaround when restoring `trigger=none`: it writes `default-on`, then `none`, then restores brightness. Tracing identified `armbian-led-state` pulling GPIO38 low during this sequence.
 
-Điều này phù hợp với quan sát Wi-Fi hoạt động khi setup lần đầu rồi mất sau reboot: state LED có thể chỉ được lưu sau phiên đầu. Đây vẫn là giải thích có cơ sở, chưa có trace của lần setup đầu để xác nhận.
+This is consistent with Wi-Fi working during initial setup and failing after reboot, since LED state may only be saved after the first session. No initial-setup trace exists to prove that explanation.
 
-## Driver/firmware thực tế của phép thử thành công
+## Driver and firmware used for the successful trial
 
-- Repo: `https://github.com/gtxaspec/aic8800-wifi`, commit `a870f7f15170a5899bf0b98769896fd1a7d4bf1e`.
-- Source chính: `SDIO/driver_fw/driver/aic8800`, release `2024_0929_2e313139`; không lấy source từ thư mục tích hợp ví dụ RK3326/RK3566.
-- Chip được nhận theo SDIO `5449:0145` là `PRODUCT_ID_AIC8801`, revision 7. Không suy ra chip D80 từ tên thư mục firmware cũ.
-- Có các sửa kiểm tra NULL và xử lý lỗi init; `CONFIG_PREALLOC_RX_SKB=y`, `CONFIG_SDIO_PWRCTRL=y`, clock SDIO 50 MHz.
-- Toàn bộ 13 file firmware từ `SDIO/driver_fw/fw/aic8800` của cùng commit, ở `/lib/firmware/aic8800-gtx-a870f7f/SDIO/aic8800`. Bao gồm `fmacfw_patch.bin`; không trộn riêng file đó vào bộ Android.
+- Origin: `gtxaspec/aic8800-wifi`, commit `a870f7f15170a5899bf0b98769896fd1a7d4bf1e`.
+- Generic `SDIO/driver_fw/driver/aic8800`, release `2024_0929_2e313139`; not the RK3326/RK3566 example integrations.
+- SDIO `5449:0145` identifies `PRODUCT_ID_AIC8801`, revision 7. The old firmware-directory name does not establish a D80 chip.
+- NULL/init error-handling fixes; `CONFIG_PREALLOC_RX_SKB=y`, `CONFIG_SDIO_PWRCTRL=y`, SDIO clock 50 MHz.
+- All 13 files from `SDIO/driver_fw/fw/aic8800` at the same commit, installed under `/lib/firmware/aic8800-gtx-a870f7f/SDIO/aic8800`. Includes `fmacfw_patch.bin`; do not mix just that file into the Android set.
 - BSP SHA-256: `33b10d87c99e0eebd0c931d1a514bf4d6312dfe79d42cfdb37f27a0f4c6a7914`.
 - FDRV SHA-256: `7667c62bfc6280642e516e4a8dfc7b0b86881b5b70e8c81104bfaf193135a898`.
-- [Patch port đầy đủ trước RX preallocation](../evidence/armbian-wifi-2026-11-02/gtx-nullguard/full-port.patch), sau đó áp [patch RX preallocation](../evidence/armbian-wifi-2026-11-02/gtx-rxprealloc/rxprealloc.patch).
+- [Full port patch before RX preallocation](../evidence/armbian-wifi-2026-11-02/gtx-nullguard/full-port.patch), followed by the [RX preallocation patch](../evidence/armbian-wifi-2026-11-02/gtx-rxprealloc/rxprealloc.patch).
 
-Kết quả này chưa chứng minh driver gốc cũng hoạt động chỉ bằng mask LED; hai boot đối chiếu dùng đúng cùng cặp GTX đã sửa. Pipeline build image hiện đã ghim source GTX, áp hai patch trên, lấy đúng bộ firmware và mask service LED ngay từ image. Bluetooth được cấu hình bỏ soft-block và BlueZ AutoEnable. Chưa xác nhận một image vừa rebuild trên phần cứng.
+The pair does not prove the original driver would work with LED masking alone. Both trials used the same patched GTX pair. The current pipeline bundles that source with both patches already applied, matching firmware, masked LED restore and Bluetooth unblock/AutoEnable settings. A fresh image still needs hardware validation. The FD655 date/time display uses different GPIOs and remains enabled.
 
-## Giới hạn và dữ liệu lưu
+## Limits and retained evidence
 
-IOS, reset GPIO132 và pinmux SDIO không đổi trong khoảng trả lời cuối đến lỗi. Snapshot clock 32 kHz và SDIO ổn định; Bluetooth bật clock UART và cấu hình 1,5 Mbaud trước lỗi nhưng không có reset/đổi baud ở thời điểm lỗi. Chỉ riêng việc chặn LED restore trong lượt đối chiếu đã cho kết quả khác.
+IOS, reset GPIO132 and SDIO pinmux did not change between the final successful response and the failure. Clock snapshots showed stable 32 kHz/SDIO state. Bluetooth enabled its UART clock and selected 1.5 Mbaud beforehand, but no reset/baud change coincided with failure. Blocking LED restore was the intentional difference between the paired trials.
 
-Trace phần mềm không đo điện áp/xung vật lý; snapshot 250 ms có thể bỏ lỡ thay đổi ngắn. Các event `power:clock_*` chưa bao phủ chắc chắn mọi thao tác gate của CCF. Trace có thể ảnh hưởng timing. Chưa kết luận loại trừ mọi nguyên nhân khác, hoặc bảo đảm Wi-Fi ổn định sau nhiều lần reboot/suspend.
+Software tracing does not measure physical voltage. Snapshots every 250 ms can miss short events; `power:clock_*` coverage does not prove every CCF gate operation was captured. Trace overhead may affect timing. The results neither exclude every other cause nor establish reliability across many reboots/suspend cycles.
 
-- [Phân tích boot lỗi](../evidence/armbian-wifi-2026-11-02/boot-observe-267bea0d/ANALYSIS.md).
-- [Phân tích boot thành công](../evidence/armbian-wifi-2026-11-02/boot-observe-noled-0713d6f3/ANALYSIS.md).
-- [Cách bộ quan sát hoạt động](WIFI_BT_BOOT_OBSERVE_2026-11-02.md).
+- [Failing-boot analysis](../evidence/armbian-wifi-2026-11-02/boot-observe-267bea0d/ANALYSIS.md).
+- [Successful-boot analysis](../evidence/armbian-wifi-2026-11-02/boot-observe-noled-0713d6f3/ANALYSIS.md).
+- [Observation design](WIFI_BT_BOOT_OBSERVE_2026-11-02.md).
 
-Raw trace, journal, binary module và firmware giữ tại máy phát triển; không đưa vào Git. Các báo cáo, patch và hash được lưu trong Git. Bộ trace đã tự trả boot options về cũ và disable hai service; riêng service LED tiếp tục masked để giữ cấu hình thành công.
+Raw traces/journals, module binaries and factory firmware were retained locally rather than committed. Reports, patches and hashes preserve the investigation. The collector restored boot options and disabled its two services after capture; LED restore stayed masked. Bundled GTX firmware in the current build is a separate, explicit exception to the earlier policy of keeping firmware outside Git.
 
-## Kiểm tra Bluetooth sau khi Wi-Fi hoạt động
+## Bluetooth after Wi-Fi recovery
 
-Trong cùng boot thành công, `h96max-bluetooth.service` và BlueZ đang chạy, HCI controller xuất hiện qua UART2 `/dev/ttyS2`, baud 1,5 Mbit/s. Ban đầu `bt_default` và `hci0` bị soft-block, controller báo `off-blocked`.
+In the successful boot, `h96max-bluetooth.service` and BlueZ ran, with the HCI controller on UART2 `/dev/ttyS2` at 1.5 Mbit/s. Initially `bt_default` and `hci0` were soft-blocked and the controller was `off-blocked`.
 
-Đã dùng `rfkill unblock bluetooth` rồi `bluetoothctl power on`: thành công, controller chuyển `Powered: yes`. Scan 10 giây thấy ít nhất 12 thiết bị Bluetooth gần đó. Sau khi client scan kết thúc, controller báo `Discovering: no`; lệnh stop từ client khác báo Failed vì không còn phiên discovery đó. Không có HCI timeout/NULL/Oops trong kiểm tra. Wi-Fi tiếp tục liên kết và ping Internet qua riêng `wlan0` đạt 3/3 phản hồi sau lượt scan Bluetooth.
+`rfkill unblock bluetooth` followed by `bluetoothctl power on` succeeded (`Powered: yes`). A ten-second scan found at least 12 nearby devices. After the scanning client ended, discovery stopped; stopping from another client failed because its discovery session was absent. No HCI timeout/NULL/Oops appeared. Wi-Fi remained linked and Internet ping explicitly over `wlan0` still returned 3/3 replies.
 
-Bluetooth được để ở trạng thái bật sau kiểm tra. Đây là xác nhận bật radio/scan và kiểm tra đồng thời ngắn với Wi-Fi; chưa pair, truyền file hoặc thử âm thanh A2DP, chưa xác nhận trạng thái Bluetooth được giữ qua reboot.
+Bluetooth was left powered on. This verifies basic power-on/discovery and short simultaneous Wi-Fi use, not pairing, file transfer, A2DP or persistence through reboot.

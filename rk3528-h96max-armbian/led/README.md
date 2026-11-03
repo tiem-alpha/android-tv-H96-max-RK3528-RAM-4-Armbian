@@ -1,9 +1,17 @@
-# Thử nghiệm LED FD655 của H96 Max
+# H96 Max FD655 front-panel display
 
-Log driver Android trên box ghi CLK là GPIO4 line 20 và DAT là GPIO4 line 19. Dịch vụ này gửi lệnh FD655 bằng GPIO hai dây theo giao thức của `evidence/linux_openvfd`. Mỗi chu kỳ 60 giây, màn hình hiện `DD/MM` trong 15 giây (dấu phân cách sáng liên tục), rồi `HH:MM` trong 45 giây (dấu hai chấm nhấp nháy). Biểu tượng Ethernet/Wi-Fi sáng khi interface tương ứng có carrier và `operstate=up`. Có thể đổi thời lượng bằng `date_seconds` và `time_seconds` trong `/etc/h96-fd655.json`.
+The Android driver log identifies GPIO4 line 20 as CLK and line 19 as DAT. This service drives the two-wire FD655 interface using the protocol documented by `evidence/linux_openvfd`.
 
-Trên box Armbian, sao chép thư mục `led` sang box, rồi chạy `sudo ./install-on-box.sh`. Xem lỗi bằng `journalctl -u h96-fd655 -b`. Thử dữ liệu mà không điều khiển GPIO bằng `python3 h96-fd655.py --dry-run`.
+Each 60-second cycle displays `DD/MM` for 15 seconds with a steady separator, then `HH:MM` for 45 seconds with a blinking colon. Ethernet and Wi-Fi icons are enabled when the corresponding interface has carrier and `operstate=up`. Change `date_seconds` and `time_seconds` in `/etc/h96-fd655.json` to adjust the cycle. The display follows the system's local time; check the timezone and time synchronization after boot.
 
-Đã xác nhận LED sáng trên box với CLK/DAT đảo theo log Android. Trước khi bật dịch vụ, kiểm tra `/dev/gpiochip4` có đúng bank GPIO4 trên kernel đang chạy (`gpioinfo`) và hai line 19/20 còn trống. Nếu ký tự hoặc icon sai vị trí, chỉnh `grid` và `icon_bits` trong `/etc/h96-fd655.json` rồi khởi động lại dịch vụ. `grid` là thứ tự RAM của icon và bốn chữ số; `icon_bits` là vị trí bit 0–7 của từng biểu tượng.
+The current image build installs the program, JSON configuration, `python3-libgpiod` and enabled systemd service. For a manual installation on a compatible Armbian box, copy this `led` directory to the box and run:
 
-Wi-Fi chỉ sáng khi radio tạo được interface và kết nối; lỗi khởi tạo AIC8801 hiện tại sẽ làm biểu tượng này tắt. Dịch vụ không điều khiển LED nguồn `pwr-wifi` riêng trên GPIO1.
+```sh
+sudo ./install-on-box.sh
+journalctl -u h96-fd655 -b
+python3 h96-fd655.py --dry-run
+```
+
+The display has worked on the project box with CLK/DAT mapped according to the Android log. Before manual installation, use `gpioinfo` to confirm `/dev/gpiochip4` is bank GPIO4 and lines 19/20 are available. If digits or icons are misplaced, adjust `grid` and `icon_bits` in `/etc/h96-fd655.json`, then restart the service. `grid` maps the icon and four digits to display RAM; `icon_bits` selects each icon's bit position (0–7).
+
+The Wi-Fi icon stays off until a wireless interface links. FD655 uses GPIO4 and does not control the separate GPIO1 `pwr-wifi` LED. Keeping `armbian-led-state.service` masked for the GPIO38 Wi-Fi workaround does not disable this display.

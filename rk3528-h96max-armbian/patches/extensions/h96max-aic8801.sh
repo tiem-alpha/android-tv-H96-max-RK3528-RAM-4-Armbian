@@ -1,44 +1,35 @@
 #!/usr/bin/env bash
-# Build the AIC8801 SDIO driver from a pinned source revision.
+# Build the bundled AIC8801 SDIO source with H96 fixes already applied.
 
 source "${SRC}/config/h96-aic8800.conf"
+
+function late_family_config__h96max_kernel_baseline() {
+	# The six empty userpatch overrides match changes already present here.
+	KERNELBRANCH="commit:4ee92c1e3bd78ddc6f57c5a9dc056281ea863072"
+}
 
 function extension_prepare_config__h96max_aic8801_packages() {
 	add_packages_to_image bluez rfkill python3-libgpiod
 }
 
-function post_family_config__h96max_aic8801_src_dir() {
-	declare -g H96_AIC_SRC_DIR="${SRC}/cache/sources/aic8800-gtx/${H96_AIC_COMMIT}"
-}
-
 function custom_kernel_config__h96max_aic8801_modules() {
-	declare -a patches=()
-	mapfile -t patches < <(find "${SRC}/patch/misc/aic8800-gtx" -maxdepth 1 -name '*.patch' | sort)
-	[[ ${#patches[@]} -eq 2 ]] || exit_with_error "AIC8801 patches missing" "expected two GTX port patches"
+	declare local_source="${SRC}/userpatches/h96-vendor/aic8800/driver"
+	[[ -s "${local_source}/Makefile" ]] || exit_with_error "AIC8801 local source missing" "${local_source}"
 	kernel_config_modifying_hashes+=("h96max_aic8801=${H96_AIC_REF}")
 	kernel_config_modifying_hashes+=("h96max_aic8801_extension=$(sha256sum "${SRC}/extensions/h96max-aic8801.sh" | cut -d' ' -f1)")
-	kernel_config_modifying_hashes+=("h96max_aic8801_patches=$(cat /dev/null "${patches[@]}" | sha256sum | cut -d' ' -f1)")
+	kernel_config_modifying_hashes+=("h96max_aic8801_source=$(cd "${local_source}" && find . -type f -print0 | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)")
 	kernel_config_modifying_hashes+=("h96max_aic8801_fw=${H96_AIC_FW_DIR}")
 	kernel_config_modifying_hashes+=("h96max_aic8801_lock=$(sha256sum "${SRC}/config/h96-aic8800.conf" | cut -d' ' -f1)")
 	kernel_config_modifying_hashes+=("h96max_aic8801_firmware=$(sha256sum "${SRC}/config/h96-aic8800-firmware.sha256" | cut -d' ' -f1)")
 	[[ ! -f .config ]] && return 0
-
-	declare kernel_cwd="${PWD}"
-	fetch_from_repo "${H96_AIC_REPO}" "aic8800-gtx" "${H96_AIC_REF}" "yes"
-	cd "${kernel_cwd}" || exit_with_error "AIC8801" "cannot return to kernel tree"
 
 	declare wireless_dir="${kernel_work_dir}/drivers/net/wireless"
 	declare driver_dir="${wireless_dir}/aicsemi"
 	run_host_command_logged rm -rf "${driver_dir}"
 	run_host_command_logged mkdir -p "${driver_dir}"
 	run_host_command_logged mkdir -p "${driver_dir}/aic8800"
-	run_host_command_logged cp -a "${H96_AIC_SRC_DIR}/${H96_AIC_DRIVER_SUBDIR}/." "${driver_dir}/aic8800/"
+	run_host_command_logged cp -a "${local_source}/." "${driver_dir}/aic8800/"
 
-	declare patch_file
-	for patch_file in "${patches[@]}"; do
-		run_host_command_logged patch --batch -p1 -d "${driver_dir}/aic8800" "<" "${patch_file}" ||
-			exit_with_error "AIC8801 patch failed" "$(basename "${patch_file}")"
-	done
 
 	cat > "${driver_dir}/Kconfig" <<'EOF'
 config WLAN_VENDOR_AICSEMI

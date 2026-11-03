@@ -9,7 +9,7 @@ import time
 
 
 DEFAULT = {
-    "gpiochip": "/dev/gpiochip4", "clk": 19, "data": 20,
+    "gpiochip": "/dev/gpiochip4", "clk": 20, "data": 19,
     "grid": [0, 4, 3, 2, 1],
     "icon_bits": {"colon": 4, "ethernet": 5, "wifi": 6},
     "brightness": 1, "delay_us": 20,

@@ -1,46 +1,44 @@
-# Tích hợp Wi-Fi/Bluetooth vào image
+# Wi-Fi and Bluetooth image integration
 
-Pipeline hiện dùng cấu hình radio đã kiểm tra trên box thay cho nhánh driver cũ.
+Updated 2026-11-03. This document describes the current pipeline. Earlier fetch-at-build and clean-Git-checkout requirements have been replaced by bundled Wi-Fi source/firmware and local Armbian snapshot support.
 
-## Thành phần của build
+## Build components
 
-- `patches/config/h96-aic8800.conf`: repo, commit, thư mục source/firmware và đường dẫn cài thống nhất.
-- `patches/config/h96-aic8800-firmware.sha256`: hash của đủ 13 file firmware cùng commit GTX.
-- `tools/prepare-aic8800-gtx.sh`: lấy source đúng commit, từ chối checkout đã sửa source/firmware, xác thực hash và tạo overlay. `build-desktop.sh` tự gọi script này. Có thể chạy riêng với `bash tools/prepare-aic8800-gtx.sh`.
-- `patches/patch/misc/aic8800-gtx/`: hai patch đã thử trên box: port/NULL/init guards và bật RX preallocation. Patch `misc/aic8800/0003...` cũ còn được giữ để tra cứu, không nằm trong danh sách patch của extension mới.
-- `patches/extensions/h96max-aic8801.sh`: ghép source vào kernel, sửa đường dẫn Kconfig, bật BSP/FDRV dạng module, thêm source/patch/manifest vào cache key. Giữ SDIO 50 MHz, power control và RX preallocation bật.
-- `patches/userpatches/customize-image.sh`: cài và kiểm tra bộ firmware GTX, mask service LED để tránh xung GPIO38, cài FD655 như trước.
-- Post-image hook xác thực lại firmware, thiết lập autoload BSP trước FDRV, mask LED, tạo service Bluetooth UART2 1,5 Mbaud với `rfkill unblock bluetooth`, bật BlueZ và `AutoEnable=true`.
-- `/etc/h96-radio-build.conf` trong image ghi commit và cấu hình radio để kiểm tra sau boot. Image không cài/bật các service trace thử nghiệm.
+- `patches/config/h96-aic8800.conf` records the GTX origin, upstream commit, original subdirectories and installation path.
+- `patches/config/h96-aic8800-firmware.sha256` contains hashes for all 13 matching firmware files.
+- `patches/vendor/aic8800/driver` contains the downloaded source with kernel 6.1, NULL/init guards and RX preallocation fixes already applied. No Wi-Fi Git fetch or patch application occurs during the build.
+- `tools/prepare-aic8800-gtx.sh` verifies bundled firmware, copies it into the image overlay and checks the staged copy. `build-desktop.sh` calls it automatically. `H96_AIC_SOURCE_DIR` is no longer used.
+- The launcher stages the driver under `userpatches/h96-vendor/aic8800/driver`, a directory Armbian mounts into Docker. The extension hashes that source, configuration and firmware manifest into the kernel cache key, integrates Kconfig/Makefile paths, and selects BSP/FDRV support as modules.
+- SDIO power control and RX preallocation are enabled. The driver selects 50 MHz; the H96 DTS also explicitly caps SDIO at 50 MHz. The SD-card controller is separately capped at 25 MHz.
+- `customize-image.sh` installs/verifies the GTX firmware, masks the GPIO38 LED-restore service and installs/enables the FD655 clock as before.
+- The post-image hook verifies firmware again, establishes BSP-before-FDRV autoload order, masks LED restore, configures UART2 Bluetooth at 1.5 Mbaud, runs `rfkill unblock bluetooth` before attach, enables BlueZ and sets `AutoEnable=true`.
+- `/etc/h96-radio-build.conf` records radio provenance/settings. Experimental trace services are not installed or enabled.
 
-Không cần trích firmware Android để build cấu hình GTX. Bộ firmware Android đã lưu chỉ dùng cho lịch sử/khôi phục driver cũ. Firmware GTX và source cache được tải từ repo ghim, binary không đưa vào Git.
+The build does not require extracting Android firmware. Factory firmware remains comparison/recovery evidence; it is not mixed with the complete GTX set.
 
-## Build trên checkout mới
+## Local build tree
 
-Từ thư mục `rk3528-h96max-armbian`:
+Use the complete existing `armbian-build` source tree. Its framework `.git` directory is not required. `tools/prepare-local-build.py` validates the layout, adapts framework logging and records a SHA-256 of build inputs. Git discovery is bounded so nested source caches cannot mistake the enclosing project for the framework repository. Kernel/U-Boot source management still uses Armbian's internal Git machinery; this is not a guarantee of a fully offline or Git-free build.
+
+The H96 extension pins kernel commit `4ee92c1e3bd78ddc6f57c5a9dc056281ea863072` (6.1.172). Six empty userpatch overrides disable changes already present in that commit; each was verified by a complete reverse dry-run. Reassess them before changing the kernel baseline.
 
 ```sh
-git clone --depth=1 https://github.com/armbian/build.git armbian-build
-H96_BUILD_THREADS=8 ./build-desktop.sh
+H96_PREPARE_ONLY=yes ./build-desktop.sh
+H96_DOCKER_LOCAL_BASE=yes H96_BUILD_THREADS=8 ./build-desktop.sh
 ```
 
-Nếu đã có `armbian-build`, cần kiểm tra đó là Git checkout riêng hợp lệ. Script từ chối thư mục chỉ còn cache/source nhưng mất `.git`, để tránh Armbian nhận nhầm Git repo cha. Không xóa cache hoặc output cũ chỉ để vượt kiểm tra này. Có thể dùng checkout Armbian mới theo hướng dẫn README.
+`H96_DOCKER_LOCAL_BASE=yes` avoids an age-triggered Docker base refresh when the base image is present. Other source/package downloads may still occur. Missing firmware or a checksum mismatch stops preparation; do not change expected hashes to bypass a failure.
 
-Firmware tự tải trước khi compile; lỗi checksum làm build dừng. Khi offline, dùng source cache đã chuẩn bị; kernel source cache của Armbian vẫn phải có revision tương ứng. `H96_AIC_SOURCE_DIR` cho phép script chuẩn bị firmware dùng một checkout sạch có sẵn, nhưng không bỏ qua kiểm tra commit/hash.
+## Validation performed
 
-## Kiểm tra đã thực hiện
+1. Verified all 13 firmware hashes and shell syntax.
+2. Ran the kernel integration hook twice in isolated staging: no duplicate Kconfig/Makefile entries; source matches the bundled driver except for intentional Kconfig path changes.
+3. Earlier component checks compared generated C/header/Makefile files with the boot-tested RX-preallocation build, exercised a minimal Kconfig tree, and built BSP/FDRV using matching 6.1.172 headers and GCC 14. Vermagic and every imported symbol CRC matched.
+4. Earlier customization checks used an isolated minimal chroot. The latest post-image check ran twice against a temporary rootfs using `systemctl --root`, without starting services. A minimal placeholder BlueZ unit checked enable-link creation; it did not prove installation of the real BlueZ package. Firmware, GPIO38 mask, autoload, Bluetooth unblock/attach and one `AutoEnable=true` entry passed.
+5. Earlier negative checks rejected corrupted firmware. The current snapshot adapter rejects incomplete framework trees; local preparation also passed with Git invocation blocked and produced a stable input hash on repeated runs.
+6. Checked the actual compiling kernel tree: bundled driver contents and Wi-Fi/GPIO/Bluetooth kernel configuration match the intended inputs. Complete image validation remains separate.
 
-1. Fetch thực từ GitHub và xác thực đủ 13 hash firmware; kiểm tra cú pháp shell.
-2. Chạy hook ghép kernel hai lần trên staging riêng: patch không chồng lặp và Kconfig/Makefile không bị thêm trùng.
-3. So sánh toàn bộ `.c`, `.h` và Makefile của source được hook tạo với source GTX RX-preallocation đã boot thành công: trùng nội dung. Kconfig được sửa riêng đường dẫn tích hợp.
-4. Chạy Kconfig `olddefconfig` trên cây Kconfig tối thiểu: vendor AICSEMI và AIC_WLAN_SUPPORT bật; FDRV/BTLPM dạng module; đường dẫn firmware đúng.
-5. Build lại module từ source do hook tạo, bằng headers `6.1.172-vendor-rk35xx` và GCC 14. Kiểm tra vermagic và toàn bộ CRC symbol nhập của BSP/FDRV đạt.
-6. Chạy `customize-image.sh` thật trong chroot x86 tối thiểu riêng, sau đó chạy post-image hook hai lần với `systemctl --root` (không start service). Xác nhận firmware đúng, LED mask, autoload, FD655 enable, Bluetooth enable, rfkill trước attach, AutoEnable và metadata. Policy BlueZ có sẵn vẫn giữ các giá trị khác.
-7. Cố ý làm hỏng một file firmware trong rootfs thử: post-image hook từ chối. Kiểm tra build script từ chối thư mục Armbian mất Git metadata trước khi gọi Docker/compile.
-
-Workspace kiểm tra: `/home/nguyentiem/h96-image-integration-check`, log build module ở `build.log`. Đây là kiểm tra thành phần pipeline, chưa phải một image mới hoàn chỉnh đã flash/boot. Armbian upstream hiện chưa được ghim commit; cần lưu revision và build log của mỗi lần build. Máy hiện có thư mục Armbian thiếu `.git`, nên chưa chạy full image build tại đó.
-
-## Xác nhận sau khi flash image mới
+## Checks after flashing the new image
 
 ```sh
 cat /etc/h96-radio-build.conf
@@ -49,6 +47,7 @@ nmcli device wifi list
 ip -4 addr show wlan0
 bluetoothctl show
 systemctl status h96max-bluetooth.service --no-pager
+systemctl status h96-fd655.service --no-pager
 ```
 
-Kiểm tra lại Wi-Fi qua reboot, DHCP và truyền dữ liệu, Bluetooth power-on/scan. Pairing, A2DP, suspend và kiểm tra dài hạn chưa được xác nhận. Giữ Ethernet/khôi phục SD khi thử image mới; giữ Android/eMMC như giới hạn boot hiện tại của dự án.
+Test Wi-Fi over cold boot/reboot, DHCP and traffic explicitly bound to `wlan0`, Bluetooth power-on/discovery, and FD655 date/time/icons. Pairing, A2DP, suspend and long-duration reliability remain unverified. Keep Ethernet and SD recovery available. eMMC remains disabled; follow the separate installation plan before attempting migration.

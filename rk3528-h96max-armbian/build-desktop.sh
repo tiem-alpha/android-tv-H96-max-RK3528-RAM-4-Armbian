@@ -9,15 +9,14 @@ if [[ ! -x "${build_dir}/compile.sh" ]]; then
 	exit 1
 fi
 
-if [[ $(git -C "${build_dir}" rev-parse --show-toplevel 2>/dev/null || true) != "${build_dir}" ]]; then
-	echo "${build_dir} is not an Armbian Git checkout; clone armbian/build there first." >&2
-	exit 1
-fi
+# The framework may be a local source snapshot without .git. Prevent Git in
+# nested source caches from walking up into the enclosing project repository.
+export GIT_CEILING_DIRECTORIES="${build_dir}${GIT_CEILING_DIRECTORIES:+:${GIT_CEILING_DIRECTORIES}}"
 
 # Prepare the exact same firmware revision as the kernel driver, automatically.
 bash "${repo_dir}/tools/prepare-aic8800-gtx.sh"
 
-if [[ "$(uname -m)" != "aarch64" ]]; then
+if [[ ${H96_PREPARE_ONLY:-no} != yes && "$(uname -m)" != "aarch64" ]]; then
 	command -v docker >/dev/null || { echo "Docker is required for ARM64 build" >&2; exit 1; }
 	if [[ ! -r /proc/sys/fs/binfmt_misc/qemu-aarch64 ]] ||
 		! grep -q '^enabled$' /proc/sys/fs/binfmt_misc/qemu-aarch64; then
@@ -46,6 +45,18 @@ install -m 0644 "${repo_dir}/led/h96-fd655.service" "${led_overlay}/h96-fd655.se
 install -m 0644 "${repo_dir}/led/h96-fd655.json" "${led_overlay}/h96-fd655.json"
 
 cp -a "${repo_dir}/patches/." "${build_dir}/"
+# Armbian bind-mounts userpatches into Docker, but not arbitrary top-level
+# vendor directories. Stage the local driver where the container can see it.
+mkdir -p "${build_dir}/userpatches/h96-vendor/aic8800"
+cp -a "${repo_dir}/patches/vendor/aic8800/driver" "${build_dir}/userpatches/h96-vendor/aic8800/"
+python3 "${repo_dir}/tools/prepare-local-build.py" "${build_dir}"
+source "${build_dir}/config/h96-local-build.conf"
+export BUILD_REPOSITORY_URL BUILD_REPOSITORY_COMMIT
+
+if [[ ${H96_PREPARE_ONLY:-no} == yes ]]; then
+	echo "Local build inputs prepared; compile was not started."
+	exit 0
+fi
 
 threads="${H96_BUILD_THREADS:-8}"
 [[ "${threads}" =~ ^[1-9][0-9]*$ ]] || { echo "H96_BUILD_THREADS must be a positive integer" >&2; exit 1; }

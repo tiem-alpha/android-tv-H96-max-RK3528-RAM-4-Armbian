@@ -27,28 +27,34 @@ ls -l build-desktop.sh patches/config/boards/rk3528-h96max.csc led/h96-fd655.py
 
 ## 2. Pinned Wi-Fi driver and matching firmware
 
-The image uses `gtxaspec/aic8800-wifi` at commit `a870f7f15170a5899bf0b98769896fd1a7d4bf1e`, generic `SDIO/driver_fw/driver/aic8800`, with the checked-in kernel 6.1/init-guard patches. RX preallocation and SDIO power control are enabled, and the SDIO clock is 50 MHz. The build masks `armbian-led-state.service` to prevent the GPIO38 pulse found in the paired boot traces.
+The image builds the bundled source in `patches/vendor/aic8800/driver` (no driver Git fetch during build), originally taken from `gtxaspec/aic8800-wifi` at commit `a870f7f15170a5899bf0b98769896fd1a7d4bf1e`, generic `SDIO/driver_fw/driver/aic8800`, with the kernel 6.1/init-guard fixes already applied directly to the bundled source. RX preallocation and SDIO power control are enabled, and the SDIO clock is 50 MHz. The build masks `armbian-led-state.service` to prevent the GPIO38 pulse found in the paired boot traces.
 
-`build-desktop.sh` automatically downloads all 13 matching firmware files from the same commit and verifies every SHA-256 before starting Armbian Build. Firmware binaries are not committed here. You do not need Android/ADB firmware extraction for this configuration. To prepare/check firmware separately:
+`build-desktop.sh` verifies all 13 bundled firmware files against SHA-256 and stages them into the image overlay. No Wi-Fi Git checkout or network download is needed. To check separately:
 
 ```bash
 bash tools/prepare-aic8800-gtx.sh
 ```
 
-The source cache is `armbian-build/cache/h96-aic8800-gtx/COMMIT/`. The generated firmware overlay is `patches/userpatches/overlay/lib/firmware/aic8800-gtx-a870f7f/SDIO/aic8800/`. Source/firmware settings and expected hashes are in `patches/config/h96-aic8800.conf` and `h96-aic8800-firmware.sha256`.
-
-For an existing clean checkout of the pinned repo, set `H96_AIC_SOURCE_DIR=/absolute/path/to/aic8800-wifi` when running the preparation script or build script. The checkout must have the exact commit and no source/firmware edits; the kernel extension fetches the same pinned commit independently. `tools/capture-aic-firmware.py` remains available to archive factory firmware, but that archive is not used by the GTX image.
+Driver and firmware live in `patches/vendor/aic8800/`. Edit the driver there; source hashes participate in the kernel cache key. `H96_AIC_SOURCE_DIR` is no longer used.
 
 ## 3. Build the image
 
-Clone Armbian Build *inside this directory*. Use an existing checkout only if it still contains its own valid Git metadata; a directory containing cached build files without `.git` is not sufficient. The script copies the current board files, patches, firmware overlay, and LED files into that checkout before every build.
+Use the existing complete Armbian source tree in `armbian-build/`; framework `.git` metadata is not required. The script checks the tree, stages board/driver/firmware/LED inputs, and records a content SHA-256 instead of querying a framework commit. It does not initialize or clone a framework repository.
 
 ```bash
-git clone --depth=1 https://github.com/armbian/build.git armbian-build
+# Prepare/check local inputs without Docker or compilation:
+H96_PREPARE_ONLY=yes ./build-desktop.sh
+# Build when disk space and dependencies are ready:
 H96_BUILD_THREADS=8 ./build-desktop.sh
+# Reuse an existing Docker base without an age-triggered refresh:
+H96_DOCKER_LOCAL_BASE=yes H96_BUILD_THREADS=8 ./build-desktop.sh
 ```
 
-Choose a smaller positive `H96_BUILD_THREADS` value if the host has limited RAM. The script fetches and verifies the firmware and checks the LED files before starting Armbian Build. It selects:
+The H96 kernel baseline is pinned to commit `4ee92c1e3bd78ddc6f57c5a9dc056281ea863072` (6.1.172). Six empty userpatch overrides skip changes already present in that commit; see their README before updating the kernel.
+
+The local snapshot adapter suppresses framework Git log queries without `.git`, and `GIT_CEILING_DIRECTORIES` prevents source-cache Git commands from discovering the enclosing project repo. This does **not** remove Armbian's internal Git dependency for kernel/U-Boot and other fetched sources, and does not guarantee an offline build. Those source caches must remain valid; missing dependencies may still require network access. Do not delete cache Git metadata.
+
+Choose a smaller positive `H96_BUILD_THREADS` value if the host has limited RAM. Firmware and LED files are checked before starting Armbian Build. It selects:
 
 | Setting | Value |
 | --- | --- |
@@ -64,15 +70,17 @@ Choose a smaller positive `H96_BUILD_THREADS` value if the host has limited RAM.
 
 The build result is under `armbian-build/output/images/`. Use the filename actually produced on your host:
 
-The [radio integration notes](docs/BUILD_RADIO_INTEGRATION_2026-11-02.md) describe the pinned source, firmware checks, GPIO38 fix and component validation. The pipeline has been checked through kernel-module compilation and isolated rootfs customization; a newly built full image still needs a boot test.
+The [radio integration notes](docs/BUILD_RADIO_INTEGRATION_2026-11-02.md) describe the pinned source, firmware checks, GPIO38 fix and component validation. The November 3 full XFCE image built successfully and passed SHA-256 plus read-only image inspection for Wi-Fi firmware/modules, GPIO38 masking, Bluetooth, FD655 and desktop packages. A boot test on the box is still required.
 
 ```bash
-find armbian-build/output/images -maxdepth 1 -type f \( -name '*.img' -o -name '*.img.xz' \) -printf '%f\n'
+find armbian-build/output/images -maxdepth 1 -type f \( -name '*.img' -o -name '*.img.xz' -o -name '*.img.gz' \) -printf '%f\n'
 ```
 
-Armbian's upstream `build` branch can change. This repository does not pin an upstream Armbian commit, so a future fresh clone may need compatibility fixes. Keep the Armbian Build revision and build log when reporting a failure.
+Armbian's upstream `build` branch can change. This repository does not pin an upstream Armbian commit, so a future fresh clone may need compatibility fixes. Keep the local input SHA-256 from `armbian-build/config/h96-local-build.conf` and the build log when reporting a failure.
 
 ## 4. Write the image to an SD card
+
+Old images may be retained as `.img.gz`; use `gzip -dc` instead of `xzcat` for that format. Existing image checksums apply to the decompressed bytes.
 
 The image is intended for SD boot with the stock Android firmware still on eMMC. The current device tree disables eMMC. **Do not use `armbian-install` or flash this image to eMMC.** Identify the entire SD-card device carefully; the following command erases it.
 
@@ -116,7 +124,7 @@ systemctl status h96-fd655.service --no-pager
 journalctl -u h96-fd655.service -b --no-pager
 ```
 
-The FD655 service shows `DD/MM` for 15 seconds and `HH:MM` for 45 seconds. The Ethernet and Wi-Fi icons follow each interface's link state. Change timing, brightness, or display mapping in `/etc/h96-fd655.json`, then run `sudo systemctl restart h96-fd655.service`. The program expects GPIO4 at `/dev/gpiochip4`, with line 19 for clock and line 20 for data. See [LED details](led/README.md).
+The FD655 service shows `DD/MM` for 15 seconds and `HH:MM` for 45 seconds. The Ethernet and Wi-Fi icons follow each interface's link state. Change timing, brightness, or display mapping in `/etc/h96-fd655.json`, then run `sudo systemctl restart h96-fd655.service`. The program expects GPIO4 at `/dev/gpiochip4`, with line 20 for clock and line 19 for data. See [LED details](led/README.md).
 
 ## Known problems and limits
 
@@ -126,33 +134,35 @@ The FD655 service shows `DD/MM` for 15 seconds and `HH:MM` for 45 seconds. The E
 | Ethernet | Working on the tested box. | Check `ip -br addr`, the cable, and DHCP if SSH is unavailable. |
 | HDMI | Picture may appear only after unplugging and reconnecting HDMI. Logs have shown `ddc read failed`. | Reconnect HDMI after boot. Use Ethernet or UART while diagnosing display output. |
 | Wi-Fi AIC8801 | On 2026-11-02, scanning, DHCP and Internet traffic worked with the patched GTX driver after masking `armbian-led-state.service`. A paired failing boot showed its restore sequence pulsing GPIO38 low before SDIO wake timeout. | See the [GPIO38 findings and workaround](docs/WIFI_GPIO38_LED_RESTORE_FIX_2026-11-02.md). The pipeline includes this configuration; a new image still needs a boot test, and long-term stability remains unverified. |
-| FD655 front display | Working on the tested box; packaged and enabled by the current build script. The new image packaging has not yet been verified by a full rebuild. | Check the service log and confirm `/dev/gpiochip4` lines 19/20 exist and are free. The Wi-Fi icon stays off until Wi-Fi links. |
+| FD655 front display | Working on the tested box; packaged and enabled by the current build script. Packaging was verified in the rebuilt November 3 image; hardware validation of that image remains pending. | Check the service log and confirm `/dev/gpiochip4` lines 19/20 exist and are free. The Wi-Fi icon stays off until Wi-Fi links. |
 | Bluetooth | On 2026-11-02, UART HCI power-on and a 10-second discovery scan worked after clearing the software rfkill block; Wi-Fi still passed Internet ping afterward. Pairing/audio remain untested. | See the [Wi-Fi/Bluetooth test notes](docs/WIFI_GPIO38_LED_RESTORE_FIX_2026-11-02.md). Check `rfkill`, `bluetoothctl show`, and `systemctl status h96max-bluetooth`. |
 | Composite AV, analog audio, USB ports, IR, keys | Device-tree support exists, but each feature has not been fully verified. | Treat each as unverified until tested on your board. |
 | Warm reboot | Has failed intermittently during Wi-Fi experiments. | If the box does not return, remove power and cold boot. Keep Ethernet and SD-card recovery available. |
 | eMMC | Disabled in this test image. | Keep Android intact and boot Armbian from SD only. |
 
-The driver built here is from a pinned AIC8800 source revision. It is **not** the exact Android module release. Android's module targets kernel 5.10 and cannot be loaded directly into this Armbian kernel. See the [driver comparison](docs/DOI_CHIEU_DRIVER_ANDROID_GOC.md) and [Wi-Fi investigation](docs/BUG_WIFI_AIC8801.md).
+The driver built here is from a pinned AIC8800 source revision. It is **not** the exact Android module release. Android's module targets kernel 5.10 and cannot be loaded directly into this Armbian kernel. See the [radio integration notes](docs/BUILD_RADIO_INTEGRATION_2026-11-02.md) and [recovery guide](docs/RECOVERY.md).
 
 ## Build troubleshooting
 
 | Symptom | Check or fix |
 | --- | --- |
-| Firmware download or SHA-256 verification fails | Run step 2 separately, check connectivity and the pinned cache. Keep the expected hashes unchanged; do not substitute firmware from another variant. |
-| Build directory has no Git checkout | Use a real clone of `armbian/build`. Keep caches separately if replacing an incomplete build directory. |
+| Bundled firmware is missing or SHA-256 verification fails | Run step 2 separately and restore the complete bundled firmware set. Keep expected hashes unchanged; do not substitute another variant. |
+| Local framework tree is incomplete | Restore the missing source files named by the adapter. Framework `.git` is optional; internal kernel/U-Boot cache metadata is separate. |
 | `Docker is required` or binfmt registration fails | Install/start Docker and allow the build host to run the privileged binfmt setup. Verify `docker info`. |
-| Armbian Build reports a missing package or network fetch error | Check Internet/DNS and the first failing line in the build log. Retry after restoring access. Record the upstream Armbian revision. |
+| Armbian Build reports a missing package or network fetch error | Check Internet/DNS and the first failing line in the build log. Retry after restoring access. Record the local build input SHA-256. |
 | Compiler is killed or the host runs out of disk | Check `free -h` and `df -h`; reduce `H96_BUILD_THREADS` and free disk space. |
 | LED service fails with `No module named gpiod` | Confirm `python3-libgpiod` was installed into the image; install it on the box and restart the service. |
 | LED service fails to request GPIO lines | Check `gpioinfo`, the GPIO chip number, line ownership, and `/etc/h96-fd655.json`. Do not change pins without checking the board wiring. |
-| Image boots but Wi-Fi cannot scan | This is the current known driver/SDIO problem. Use Ethernet and collect the error logs above. |
+| Image boots but Wi-Fi cannot scan | Confirm GTX modules/firmware, GPIO38 LED-restore masking and the H96 DTB, then collect kernel/NetworkManager logs over Ethernet. |
 
 ## References
 
-- [Current board status](docs/TRANG_THAI_THUC_TE_2026-10-31.md)
-- [Detailed Wi-Fi investigation](docs/BUG_WIFI_AIC8801.md)
-- [Android driver comparison](docs/DOI_CHIEU_DRIVER_ANDROID_GOC.md)
-- [Android boot log](logs/stock-boot.log)
+- [Documentation index](docs/README.md)
+- [Recovery guide and initramfs incident analysis](docs/RECOVERY.md)
+- [Maintained tools](tools/README.md)
+- [Prebuild review and cleanup](docs/PREBUILD_CHECK_2026-11-03.md)
+
+- [SD-to-eMMC installation plan (not yet validated)](docs/SD_TO_EMMC_INSTALLATION.md)
 - [Stock device tree](dts/original-rk3528-evb2-ddr3-v10.dts)
 - [Board photos and UART locations](https://forum.armbian.com/topic/59122-h96-max-rk3528-cannot-boot-armbian-from-tfsd-card/)
 

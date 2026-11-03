@@ -4,3 +4,5 @@
 __pycache__/
 /patches/userpatches/overlay/lib/firmware/aic8800-gtx-*/
 /patches/userpatches/overlay/h96-radio.conf
+
+/logs/build-*.log

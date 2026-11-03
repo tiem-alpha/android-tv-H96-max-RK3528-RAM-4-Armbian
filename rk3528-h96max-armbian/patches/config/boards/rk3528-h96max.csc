@@ -3,6 +3,7 @@
 # H96 Max RK3528 board layer for the vendor 6.1 kernel.
 
 source "${SRC}/config/boards/hinlink-ht2.csc"
+[[ ! -f "${SRC}/config/h96-local-build.conf" ]] || source "${SRC}/config/h96-local-build.conf"
 
 BOARD_NAME="H96 Max RK3528"
 BOARD_VENDOR="h96"

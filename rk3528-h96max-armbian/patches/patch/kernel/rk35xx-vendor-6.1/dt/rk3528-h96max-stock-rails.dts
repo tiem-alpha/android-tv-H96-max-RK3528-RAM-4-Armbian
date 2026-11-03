@@ -84,7 +84,11 @@
 &wireless_wlan { wifi_chip_type = "ap6275s"; };
 
 /* Android's Wi-Fi SDIO node keeps this tuning flag enabled. */
-&sdio0 { rockchip,use-v2-tuning; };
+&sdio0 {
+	/* Match the 50 MHz radio configuration tested on this H96 board. */
+	max-frequency = <50000000>;
+	rockchip,use-v2-tuning;
+};
 
 &pinctrl {
 	h96-wifi {
