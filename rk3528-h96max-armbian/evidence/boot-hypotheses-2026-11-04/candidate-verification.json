@@ -1,0 +1,109 @@
+{
+  "hardened": {
+    "elf_matches_binary": true,
+    "driver_count": 29,
+    "spl_size": 247300,
+    "within_limit": true
+  },
+  "diagnostic-cache-on": {
+    "elf_matches_binary": true,
+    "driver_count": 29,
+    "spl_size": 249004,
+    "within_limit": true
+  },
+  "diagnostic-cache-off": {
+    "elf_matches_binary": true,
+    "driver_count": 29,
+    "spl_size": 246572,
+    "within_limit": true
+  },
+  "fit": {
+    "sha256": "48443a8ec47b05714368612aacf6e9e9de04229eb363e1c0255bdfd20091ff25",
+    "size": 1318912,
+    "configuration": "conf",
+    "references": {
+      "firmware": [
+        "atf-1"
+      ],
+      "loadables": [
+        "uboot",
+        "atf-2",
+        "atf-3"
+      ],
+      "fdt": [
+        "fdt"
+      ]
+    },
+    "images": [
+      {
+        "name": "uboot",
+        "file_offset": 2048,
+        "size": 1145376,
+        "hashes": [
+          {
+            "algorithm": "sha256",
+            "value": "292aad7fc1a6a1704a610f6794d05b499a33342bb4cc4c9fc53e713331f9f7b7",
+            "verified": true
+          }
+        ],
+        "load_start": "0x200000",
+        "load_end": "0x317a20"
+      },
+      {
+        "name": "atf-1",
+        "file_offset": 1147904,
+        "size": 142690,
+        "hashes": [
+          {
+            "algorithm": "sha256",
+            "value": "2493d19c1ea766427c238ac7f34d055548136f97b0206de786173585f595558f",
+            "verified": true
+          }
+        ],
+        "load_start": "0x80000",
+        "load_end": "0xa2d62"
+      },
+      {
+        "name": "atf-2",
+        "file_offset": 1290752,
+        "size": 12288,
+        "hashes": [
+          {
+            "algorithm": "sha256",
+            "value": "8ce368911147cbcc0a3659cbe5af8ca04c9e246eded8fae271d2b6475a2d45d6",
+            "verified": true
+          }
+        ],
+        "load_start": "0xfe48d000",
+        "load_end": "0xfe490000"
+      },
+      {
+        "name": "atf-3",
+        "file_offset": 1303040,
+        "size": 7204,
+        "hashes": [
+          {
+            "algorithm": "sha256",
+            "value": "bc35c9ef8551f05bb8cab064be4b6cbcb98ea10a67ede092016ccce04200bd09",
+            "verified": true
+          }
+        ],
+        "load_start": "0xfe490000",
+        "load_end": "0xfe491c24"
+      },
+      {
+        "name": "fdt",
+        "file_offset": 1310720,
+        "size": 7992,
+        "hashes": [
+          {
+            "algorithm": "sha256",
+            "value": "db83a0738a78c82a0c5e5913509555359900fe2075497362dabc7ad2e4a3decc",
+            "verified": true
+          }
+        ]
+      }
+    ],
+    "load_ranges_disjoint": true
+  }
+}

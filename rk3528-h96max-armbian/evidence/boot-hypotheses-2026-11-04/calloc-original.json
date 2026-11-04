@@ -1,0 +1,8 @@
+{
+  "normal_allocation_zeroed": true,
+  "oom_returns_without_memset": false,
+  "null_memset_calls_on_oom": 1,
+  "multiplication_overflow_rejected": false,
+  "zero_size_valid": true,
+  "status": "SOURCE_DEFECTS_REPRODUCED"
+}

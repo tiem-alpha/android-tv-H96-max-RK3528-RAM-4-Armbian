@@ -1,0 +1,111 @@
+[
+  {
+    "entry": "start",
+    "scenario": "clean",
+    "modeled_el": 3,
+    "count": 1339289,
+    "stop": "spl_early_init_return",
+    "final_pointer": "0x28e6f",
+    "sfc_compares": 11,
+    "heap_state": {
+      "malloc_base": 66453504,
+      "malloc_limit": 524288,
+      "malloc_ptr": 40336
+    },
+    "bad_memory": null
+  },
+  {
+    "entry": "start",
+    "scenario": "poison-bss",
+    "modeled_el": 3,
+    "count": 1339289,
+    "stop": "spl_early_init_return",
+    "final_pointer": "0x28e6f",
+    "sfc_compares": 11,
+    "heap_state": {
+      "malloc_base": 66453504,
+      "malloc_limit": 524288,
+      "malloc_ptr": 40336
+    },
+    "bad_memory": null
+  },
+  {
+    "entry": "start",
+    "scenario": "serial-atags",
+    "modeled_el": 3,
+    "count": 1339325,
+    "stop": "spl_early_init_return",
+    "final_pointer": "0x28e6f",
+    "sfc_compares": 11,
+    "heap_state": {
+      "malloc_base": 66453504,
+      "malloc_limit": 524288,
+      "malloc_ptr": 40336
+    },
+    "bad_memory": null
+  },
+  {
+    "entry": "start",
+    "scenario": "bad-sfc-compatible",
+    "modeled_el": 3,
+    "count": 1235256,
+    "stop": "spl_early_init_return",
+    "final_pointer": "0x28e6f",
+    "sfc_compares": 9,
+    "heap_state": {
+      "malloc_base": 66453504,
+      "malloc_limit": 524288,
+      "malloc_ptr": 38880
+    },
+    "bad_memory": null
+  },
+  {
+    "entry": "start",
+    "scenario": "bad-sfc-reg",
+    "modeled_el": 3,
+    "count": 1339289,
+    "stop": "spl_early_init_return",
+    "final_pointer": "0x28e6f",
+    "sfc_compares": 11,
+    "heap_state": {
+      "malloc_base": 66453504,
+      "malloc_limit": 524288,
+      "malloc_ptr": 40336
+    },
+    "bad_memory": null
+  },
+  {
+    "entry": "start",
+    "scenario": "injected-pointer",
+    "modeled_el": 3,
+    "count": 482475,
+    "stop": "invalid_memory",
+    "final_pointer": "0x300000027e6f",
+    "sfc_compares": 1,
+    "heap_state": {
+      "malloc_base": 66453504,
+      "malloc_limit": 524288,
+      "malloc_ptr": 33208
+    },
+    "bad_memory": {
+      "address": "0x300000027e6f",
+      "pc": "0x9410",
+      "access": 19
+    }
+  },
+  {
+    "entry": "start",
+    "scenario": "clean",
+    "modeled_el": 2,
+    "count": 1339291,
+    "stop": "spl_early_init_return",
+    "final_pointer": "0x28e6f",
+    "sfc_compares": 11,
+    "heap_state": {
+      "malloc_base": 66453504,
+      "malloc_limit": 524288,
+      "malloc_ptr": 40336
+    },
+    "bad_memory": null
+  }
+]

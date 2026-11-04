@@ -1,0 +1,409 @@
+{
+  "spl/u-boot-spl.dtb": {
+    "matching_reg_nodes": [
+      {
+        "node": "/firmware/scmi/protocol@14",
+        "reg": []
+      },
+      {
+        "node": "/scmi-shmem@10f000",
+        "reg": [
+          {
+            "start": "0x10f000",
+            "size": "0x100",
+            "end": "0x10f100"
+          }
+        ]
+      },
+      {
+        "node": "/syscon@ff300000",
+        "reg": [
+          {
+            "start": "0xff300000",
+            "size": "0x90000",
+            "end": "0xff390000"
+          }
+        ]
+      },
+      {
+        "node": "/clock-controller@ff4a0000",
+        "reg": [
+          {
+            "start": "0xff4a0000",
+            "size": "0x30000",
+            "end": "0xff4d0000"
+          }
+        ]
+      },
+      {
+        "node": "/syscon@ff540000",
+        "reg": [
+          {
+            "start": "0xff540000",
+            "size": "0x40000",
+            "end": "0xff580000"
+          }
+        ]
+      },
+      {
+        "node": "/serial@ffa00000",
+        "reg": [
+          {
+            "start": "0xffa00000",
+            "size": "0x100",
+            "end": "0xffa00100"
+          }
+        ]
+      },
+      {
+        "node": "/mmc@ffbf0000",
+        "reg": [
+          {
+            "start": "0xffbf0000",
+            "size": "0x10000",
+            "end": "0xffc00000"
+          }
+        ]
+      },
+      {
+        "node": "/spi@ffc00000",
+        "reg": [
+          {
+            "start": "0xffc00000",
+            "size": "0x4000",
+            "end": "0xffc04000"
+          }
+        ]
+      },
+      {
+        "node": "/mmc@ffc30000",
+        "reg": [
+          {
+            "start": "0xffc30000",
+            "size": "0x4000",
+            "end": "0xffc34000"
+          }
+        ]
+      },
+      {
+        "node": "/crypto@ffc40000",
+        "reg": [
+          {
+            "start": "0xffc40000",
+            "size": "0x2000",
+            "end": "0xffc42000"
+          }
+        ]
+      },
+      {
+        "node": "/otp@ffce0000",
+        "reg": [
+          {
+            "start": "0xffce0000",
+            "size": "0x4000",
+            "end": "0xffce4000"
+          }
+        ]
+      },
+      {
+        "node": "/pinctrl/gpio@ff610000",
+        "reg": [
+          {
+            "start": "0xff610000",
+            "size": "0x200",
+            "end": "0xff610200"
+          }
+        ]
+      },
+      {
+        "node": "/pinctrl/gpio@ffaf0000",
+        "reg": [
+          {
+            "start": "0xffaf0000",
+            "size": "0x200",
+            "end": "0xffaf0200"
+          }
+        ]
+      },
+      {
+        "node": "/pinctrl/gpio@ffb00000",
+        "reg": [
+          {
+            "start": "0xffb00000",
+            "size": "0x200",
+            "end": "0xffb00200"
+          }
+        ]
+      }
+    ],
+    "different_reg_nodes": [],
+    "nodes_not_in_android": [
+      {
+        "node": "/spi@ffc00000/flash@0",
+        "reg": []
+      },
+      {
+        "node": "/spi@ffc00000/flash@1",
+        "reg": []
+      },
+      {
+        "node": "/secure-otp@ffcd0000",
+        "reg": [
+          {
+            "start": "0xffcd0000",
+            "size": "0x4000",
+            "end": "0xffcd4000"
+          }
+        ]
+      }
+    ]
+  },
+  "u-boot.dtb": {
+    "matching_reg_nodes": [
+      {
+        "node": "/firmware/scmi/protocol@14",
+        "reg": []
+      },
+      {
+        "node": "/scmi-shmem@10f000",
+        "reg": [
+          {
+            "start": "0x10f000",
+            "size": "0x100",
+            "end": "0x10f100"
+          }
+        ]
+      },
+      {
+        "node": "/syscon@ff300000",
+        "reg": [
+          {
+            "start": "0xff300000",
+            "size": "0x90000",
+            "end": "0xff390000"
+          }
+        ]
+      },
+      {
+        "node": "/clock-controller@ff4a0000",
+        "reg": [
+          {
+            "start": "0xff4a0000",
+            "size": "0x30000",
+            "end": "0xff4d0000"
+          }
+        ]
+      },
+      {
+        "node": "/syscon@ff540000",
+        "reg": [
+          {
+            "start": "0xff540000",
+            "size": "0x40000",
+            "end": "0xff580000"
+          }
+        ]
+      },
+      {
+        "node": "/serial@ffa00000",
+        "reg": [
+          {
+            "start": "0xffa00000",
+            "size": "0x100",
+            "end": "0xffa00100"
+          }
+        ]
+      },
+      {
+        "node": "/saradc@ffae0000",
+        "reg": [
+          {
+            "start": "0xffae0000",
+            "size": "0x10000",
+            "end": "0xffaf0000"
+          }
+        ]
+      },
+      {
+        "node": "/mmc@ffbf0000",
+        "reg": [
+          {
+            "start": "0xffbf0000",
+            "size": "0x10000",
+            "end": "0xffc00000"
+          }
+        ]
+      },
+      {
+        "node": "/spi@ffc00000",
+        "reg": [
+          {
+            "start": "0xffc00000",
+            "size": "0x4000",
+            "end": "0xffc04000"
+          }
+        ]
+      },
+      {
+        "node": "/mmc@ffc30000",
+        "reg": [
+          {
+            "start": "0xffc30000",
+            "size": "0x4000",
+            "end": "0xffc34000"
+          }
+        ]
+      },
+      {
+        "node": "/crypto@ffc40000",
+        "reg": [
+          {
+            "start": "0xffc40000",
+            "size": "0x2000",
+            "end": "0xffc42000"
+          }
+        ]
+      },
+      {
+        "node": "/rng@ffc50000",
+        "reg": [
+          {
+            "start": "0xffc50000",
+            "size": "0x200",
+            "end": "0xffc50200"
+          }
+        ]
+      },
+      {
+        "node": "/otp@ffce0000",
+        "reg": [
+          {
+            "start": "0xffce0000",
+            "size": "0x4000",
+            "end": "0xffce4000"
+          }
+        ]
+      },
+      {
+        "node": "/phy@ffdc0000",
+        "reg": [
+          {
+            "start": "0xffdc0000",
+            "size": "0x10000",
+            "end": "0xffdd0000"
+          }
+        ]
+      },
+      {
+        "node": "/usb2-phy@ffdf0000",
+        "reg": [
+          {
+            "start": "0xffdf0000",
+            "size": "0x10000",
+            "end": "0xffe00000"
+          }
+        ]
+      },
+      {
+        "node": "/pinctrl/gpio@ff610000",
+        "reg": [
+          {
+            "start": "0xff610000",
+            "size": "0x200",
+            "end": "0xff610200"
+          }
+        ]
+      },
+      {
+        "node": "/pinctrl/gpio@ffaf0000",
+        "reg": [
+          {
+            "start": "0xffaf0000",
+            "size": "0x200",
+            "end": "0xffaf0200"
+          }
+        ]
+      },
+      {
+        "node": "/pinctrl/gpio@ffb00000",
+        "reg": [
+          {
+            "start": "0xffb00000",
+            "size": "0x200",
+            "end": "0xffb00200"
+          }
+        ]
+      },
+      {
+        "node": "/pinctrl/gpio@ffb10000",
+        "reg": [
+          {
+            "start": "0xffb10000",
+            "size": "0x200",
+            "end": "0xffb10200"
+          }
+        ]
+      },
+      {
+        "node": "/pinctrl/gpio@ffb20000",
+        "reg": [
+          {
+            "start": "0xffb20000",
+            "size": "0x200",
+            "end": "0xffb20200"
+          }
+        ]
+      }
+    ],
+    "different_reg_nodes": [],
+    "nodes_not_in_android": [
+      {
+        "node": "/spi@ffc00000/flash@0",
+        "reg": []
+      },
+      {
+        "node": "/spi@ffc00000/flash@1",
+        "reg": []
+      },
+      {
+        "node": "/secure-otp@ffcd0000",
+        "reg": [
+          {
+            "start": "0xffcd0000",
+            "size": "0x4000",
+            "end": "0xffcd4000"
+          }
+        ]
+      }
+    ]
+  },
+  "android_linux_memory": [
+    {
+      "start": "0x200000",
+      "size": "0x8200000",
+      "end": "0x8400000"
+    },
+    {
+      "start": "0x8c00000",
+      "size": "0xf3400000",
+      "end": "0xfc000000"
+    }
+  ],
+  "android_reserved_memory": {
+    "/reserved-memory/drm-logo@00000000": [
+      {
+        "start": "0xf9f00000",
+        "size": "0xbddc00",
+        "end": "0xfaaddc00"
+      }
+    ],
+    "/reserved-memory/drm-cubic-lut@00000000": [],
+    "/reserved-memory/ramoops@110000": [
+      {
+        "start": "0x110000",
+        "size": "0xe0000",
+        "end": "0x1f0000"
+      }
+    ]
+  }
+}

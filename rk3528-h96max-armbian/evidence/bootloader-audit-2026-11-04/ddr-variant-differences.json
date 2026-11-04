@@ -1,0 +1,530 @@
+{
+  "2L_PCB_v1.09": {
+    "phy_ddr3_ca_drv_when_odten_ohm": [
+      "41",
+      "50"
+    ],
+    "phy_ddr3_clk_drv_when_odten_ohm": [
+      "41",
+      "50"
+    ],
+    "phy_ddr3_ca_drv_when_odtoff_ohm": [
+      "41",
+      "50"
+    ],
+    "phy_ddr3_clk_drv_when_odtoff_ohm": [
+      "41",
+      "50"
+    ],
+    "ddr3_odt_ohm": [
+      "120",
+      "60"
+    ],
+    "phy_ddr3_ca_sr_when_odten": [
+      "3",
+      "7"
+    ],
+    "phy_ddr3_clk_sr_when_odten": [
+      "1",
+      "0"
+    ],
+    "phy_ddr3_ca_sr_when_odtoff": [
+      "3",
+      "7"
+    ],
+    "phy_ddr3_clk_sr_when_odtoff": [
+      "1",
+      "0"
+    ],
+    "phy_lp3_ca_drv_when_odten_ohm": [
+      "45",
+      "34"
+    ],
+    "phy_lp3_ca_drv_when_odtoff_ohm": [
+      "45",
+      "34"
+    ],
+    "lp3_odt_ohm": [
+      "60",
+      "240"
+    ],
+    "phy_lp3_clk_sr_when_odten": [
+      "3",
+      "7"
+    ],
+    "phy_lp3_clk_sr_when_odtoff": [
+      "3",
+      "7"
+    ],
+    "phy_lp4_dq_drv_when_odten_ohm": [
+      "40",
+      "46"
+    ],
+    "phy_lp4_ca_drv_when_odten_ohm": [
+      "49",
+      "46"
+    ],
+    "phy_lp4_clk_drv_when_odten_ohm": [
+      "49",
+      "46"
+    ],
+    "phy_lp4_dq_drv_when_odtoff_ohm": [
+      "40",
+      "46"
+    ],
+    "phy_lp4_ca_drv_when_odtoff_ohm": [
+      "49",
+      "46"
+    ],
+    "phy_lp4_clk_drv_when_odtoff_ohm": [
+      "49",
+      "46"
+    ],
+    "phy_lp4_dq_sr_when_odten": [
+      "5",
+      "3"
+    ],
+    "phy_lp4_dq_sr_when_odtoff": [
+      "5",
+      "3"
+    ],
+    "lp4_dq_vref_when_odten": [
+      "270",
+      "275"
+    ],
+    "lp4_ca_vref_when_odten": [
+      "340",
+      "336"
+    ],
+    "phy_lp4x_dq_drv_when_odten_ohm": [
+      "58",
+      "30"
+    ],
+    "phy_lp4x_dq_drv_when_odtoff_ohm": [
+      "58",
+      "30"
+    ],
+    "lp4x_odt_ohm": [
+      "40",
+      "80"
+    ],
+    "lp4x_dq_vref_when_odten": [
+      "262",
+      "269"
+    ],
+    "ddr3_ca0_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca1_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca2_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca3_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca4_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca5_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca6_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca7_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca8_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca9_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca10_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca11_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca12_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca13_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca14_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ca15_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ras_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_cas_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ba0_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ba1_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ba2_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_we_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_cke0_skew": [
+      "0x4c",
+      "0x7e"
+    ],
+    "ddr3_cke1_skew": [
+      "0x4c",
+      "0x80"
+    ],
+    "ddr3_ckn_skew": [
+      "0x80",
+      "0xb9"
+    ],
+    "ddr3_ckp_skew": [
+      "0x80",
+      "0xb9"
+    ],
+    "ddr3_odt0_skew": [
+      "0x4a",
+      "0x48"
+    ],
+    "ddr3_odt1_skew": [
+      "0x51",
+      "0x4e"
+    ],
+    "ddr3_cs0_skew": [
+      "0x56",
+      "0x44"
+    ],
+    "ddr3_cs1_skew": [
+      "0x5d",
+      "0x44"
+    ],
+    "ddr4_ca0_skew": [
+      "0x55",
+      "0x2b"
+    ],
+    "ddr4_ca1_skew": [
+      "0x55",
+      "0x41"
+    ],
+    "ddr4_ca2_skew": [
+      "0x55",
+      "0x2b"
+    ],
+    "ddr4_ca3_skew": [
+      "0x55",
+      "0x38"
+    ],
+    "ddr4_ca4_skew": [
+      "0x55",
+      "0x35"
+    ],
+    "ddr4_ca5_skew": [
+      "0x55",
+      "0x43"
+    ],
+    "ddr4_ca6_skew": [
+      "0x55",
+      "0x29"
+    ],
+    "ddr4_ca7_skew": [
+      "0x55",
+      "0x43"
+    ],
+    "ddr4_ca8_skew": [
+      "0x55",
+      "0x2e"
+    ],
+    "ddr4_ca9_skew": [
+      "0x55",
+      "0x46"
+    ],
+    "ddr4_ca10_skew": [
+      "0x55",
+      "0x36"
+    ],
+    "ddr4_ca11_skew": [
+      "0x55",
+      "0x30"
+    ],
+    "ddr4_ca12_skew": [
+      "0x55",
+      "0x47"
+    ],
+    "ddr4_ca13_skew": [
+      "0x55",
+      "0x49"
+    ],
+    "ddr4_ca14_skew": [
+      "0x55",
+      "0x20"
+    ],
+    "ddr4_ca15_skew": [
+      "0x55",
+      "0x4b"
+    ],
+    "ddr4_ca16_skew": [
+      "0x55",
+      "0x43"
+    ],
+    "ddr4_ca17_skew": [
+      "0x55",
+      "0x80"
+    ],
+    "ddr4_ba0_skew": [
+      "0x55",
+      "0x25"
+    ],
+    "ddr4_ba1_skew": [
+      "0x55",
+      "0x48"
+    ],
+    "ddr4_bg0_skew": [
+      "0x55",
+      "0x22"
+    ],
+    "ddr4_bg1_skew": [
+      "0x55",
+      "0x80"
+    ],
+    "ddr4_cke0_skew": [
+      "0x4b",
+      "0x43"
+    ],
+    "ddr4_cke1_skew": [
+      "0x4b",
+      "0x43"
+    ],
+    "ddr4_odt0_skew": [
+      "0x4b",
+      "0x3a"
+    ],
+    "ddr4_odt1_skew": [
+      "0x4b",
+      "0x3a"
+    ],
+    "ddr4_cs0_skew": [
+      "0x53",
+      "0x42"
+    ],
+    "ddr4_cs1_skew": [
+      "0x53",
+      "0x42"
+    ],
+    "ddr4_actn_skew": [
+      "0x55",
+      "0x1c"
+    ]
+  },
+  "4BIT_PCB_v1.09": {
+    "ddr3_freq": [
+      "1056",
+      "786"
+    ],
+    "ddr3_f3_freq_mhz": [
+      "780",
+      "666"
+    ],
+    "phy_ddr3_dq_drv_when_odten_ohm": [
+      "41",
+      "40"
+    ],
+    "phy_ddr3_ca_drv_when_odten_ohm": [
+      "41",
+      "28"
+    ],
+    "phy_ddr3_clk_drv_when_odten_ohm": [
+      "41",
+      "50"
+    ],
+    "phy_ddr3_dq_drv_when_odtoff_ohm": [
+      "41",
+      "40"
+    ],
+    "phy_ddr3_ca_drv_when_odtoff_ohm": [
+      "41",
+      "28"
+    ],
+    "phy_ddr3_clk_drv_when_odtoff_ohm": [
+      "41",
+      "50"
+    ],
+    "ddr3_odt_ohm": [
+      "120",
+      "60"
+    ],
+    "phy_ddr3_dq_sr_when_odten": [
+      "7",
+      "3"
+    ],
+    "phy_ddr3_ca_sr_when_odten": [
+      "3",
+      "15"
+    ],
+    "phy_ddr3_clk_sr_when_odten": [
+      "1",
+      "7"
+    ],
+    "phy_ddr3_dq_sr_when_odtoff": [
+      "7",
+      "3"
+    ],
+    "phy_ddr3_ca_sr_when_odtoff": [
+      "3",
+      "15"
+    ],
+    "phy_ddr3_clk_sr_when_odtoff": [
+      "1",
+      "7"
+    ],
+    "ddr3_ca0_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca1_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca2_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca3_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca4_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca5_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca6_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca7_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca8_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca9_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca10_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca11_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca12_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca13_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca14_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ca15_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ras_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_cas_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ba0_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ba1_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_ba2_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_we_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_cke0_skew": [
+      "0x4c",
+      "0x7b"
+    ],
+    "ddr3_cke1_skew": [
+      "0x4c",
+      "0x58"
+    ],
+    "ddr3_odt0_skew": [
+      "0x4a",
+      "0x7b"
+    ],
+    "ddr3_odt1_skew": [
+      "0x51",
+      "0x48"
+    ],
+    "ddr3_cs0_skew": [
+      "0x56",
+      "0x7b"
+    ],
+    "ddr3_cs1_skew": [
+      "0x5d",
+      "0x49"
+    ],
+    "ddr3_resetn_skew": [
+      "0x80",
+      "0x58"
+    ]
+  }
+}

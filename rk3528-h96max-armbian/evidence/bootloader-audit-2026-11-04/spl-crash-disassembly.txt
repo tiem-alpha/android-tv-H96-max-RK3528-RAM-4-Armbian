@@ -1,0 +1,133 @@
+
+rk3528-h96max-armbian/armbian-build/cache/sources/u-boot-worktree/u-boot-rockchip64/next-dev-v2024.10/spl/u-boot-spl:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+0000000000009408 <strcmp>:
+    9408:	aa0003e4 	mov	x4, x0
+    940c:	d2800003 	mov	x3, #0x0                   	// #0
+    9410:	38636885 	ldrb	w5, [x4, x3]
+    9414:	38636822 	ldrb	w2, [x1, x3]
+    9418:	4b0200a2 	sub	w2, w5, w2
+    941c:	13001c40 	sxtb	w0, w2
+    9420:	35000060 	cbnz	w0, 942c <strcmp+0x24>
+    9424:	91000463 	add	x3, x3, #0x1
+    9428:	35ffff45 	cbnz	w5, 9410 <strcmp+0x8>
+    942c:	d65f03c0 	ret
+
+0000000000009430 <strncmp>:
+    9430:	aa0003e5 	mov	x5, x0
+    9434:	d2800004 	mov	x4, #0x0                   	// #0
+
+
+rk3528-h96max-armbian/armbian-build/cache/sources/u-boot-worktree/u-boot-rockchip64/next-dev-v2024.10/spl/u-boot-spl:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+000000000000e4e0 <lists_bind_fdt+0xf4>:
+    e4e0:	f9400af8 	ldr	x24, [x23, #16]
+    e4e4:	b50000f8 	cbnz	x24, e500 <lists_bind_fdt+0x114>
+    e4e8:	9101e2f7 	add	x23, x23, #0x78
+    e4ec:	17ffffeb 	b	e498 <lists_bind_fdt+0xac>
+    e4f0:	aa1a03e1 	mov	x1, x26
+    e4f4:	97ffebc5 	bl	9408 <strcmp>
+    e4f8:	340000a0 	cbz	w0, e50c <lists_bind_fdt+0x120>
+    e4fc:	91004318 	add	x24, x24, #0x10
+    e500:	f9400300 	ldr	x0, [x24]
+    e504:	b5ffff60 	cbnz	x0, e4f0 <lists_bind_fdt+0x104>
+    e508:	17fffff8 	b	e4e8 <lists_bind_fdt+0xfc>
+
+
+rk3528-h96max-armbian/armbian-build/cache/sources/u-boot-worktree/u-boot-rockchip64/next-dev-v2024.10/spl/u-boot-spl:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+0000000000001758 <get_tcr>:
+    1758:	900001c3 	adrp	x3, 39000 <spinand_manufacturers+0x40>
+    175c:	f9406c63 	ldr	x3, [x3, #216]
+    1760:	d2800004 	mov	x4, #0x0                   	// #0
+    1764:	f9400066 	ldr	x6, [x3]
+    1768:	f94008c5 	ldr	x5, [x6, #16]
+    176c:	b5000465 	cbnz	x5, 17f8 <get_tcr+0xa0>
+    1770:	f9400cc3 	ldr	x3, [x6, #24]
+    1774:	b5000423 	cbnz	x3, 17f8 <get_tcr+0xa0>
+    1778:	d2c20005 	mov	x5, #0x100000000000        	// #17592186044416
+    177c:	eb05009f 	cmp	x4, x5
+    1780:	54000468 	b.hi	180c <get_tcr+0xb4>  // b.pmore
+    1784:	d2c08005 	mov	x5, #0x40000000000         	// #4398046511104
+    1788:	eb05009f 	cmp	x4, x5
+    178c:	54000468 	b.hi	1818 <get_tcr+0xc0>  // b.pmore
+    1790:	d2c02005 	mov	x5, #0x10000000000         	// #1099511627776
+    1794:	eb05009f 	cmp	x4, x5
+    1798:	54000468 	b.hi	1824 <get_tcr+0xcc>  // b.pmore
+    179c:	d2c00205 	mov	x5, #0x1000000000          	// #68719476736
+    17a0:	eb05009f 	cmp	x4, x5
+    17a4:	54000468 	b.hi	1830 <get_tcr+0xd8>  // b.pmore
+    17a8:	d2c00025 	mov	x5, #0x100000000           	// #4294967296
+    17ac:	eb05009f 	cmp	x4, x5
+    17b0:	54000469 	b.ls	183c <get_tcr+0xe4>  // b.plast
+    17b4:	d2800484 	mov	x4, #0x24                  	// #36
+    17b8:	d2800023 	mov	x3, #0x1                   	// #1
+    17bc:	929fffe6 	mov	x6, #0xffffffffffff0000    	// #-65536
+    17c0:	7100041f 	cmp	w0, #0x1
+    17c4:	f2b01006 	movk	x6, #0x8080, lsl #16
+    17c8:	d2800800 	mov	x0, #0x40                  	// #64
+    17cc:	aa0340c5 	orr	x5, x6, x3, lsl #16
+    17d0:	cb040000 	sub	x0, x0, x4
+    17d4:	9a8610a5 	csel	x5, x5, x6, ne	// ne = any
+    17d8:	aa050000 	orr	x0, x0, x5
+    17dc:	d286a005 	mov	x5, #0x3500                	// #13568
+    17e0:	aa050000 	orr	x0, x0, x5
+    17e4:	b4000041 	cbz	x1, 17ec <get_tcr+0x94>
+    17e8:	f9000023 	str	x3, [x1]
+    17ec:	b4000042 	cbz	x2, 17f4 <get_tcr+0x9c>
+    17f0:	f9000044 	str	x4, [x2]
+    17f4:	d65f03c0 	ret
+    17f8:	f84204c3 	ldr	x3, [x6], #32
+    17fc:	8b0300a5 	add	x5, x5, x3
+    1800:	eb05009f 	cmp	x4, x5
+    1804:	9a852084 	csel	x4, x4, x5, cs	// cs = hs, nlast
+    1808:	17ffffd8 	b	1768 <get_tcr+0x10>
+    180c:	d2800604 	mov	x4, #0x30                  	// #48
+    1810:	d28000a3 	mov	x3, #0x5                   	// #5
+    1814:	17ffffea 	b	17bc <get_tcr+0x64>
+    1818:	d2800584 	mov	x4, #0x2c                  	// #44
+    181c:	d2800083 	mov	x3, #0x4                   	// #4
+    1820:	17ffffe7 	b	17bc <get_tcr+0x64>
+    1824:	d2800544 	mov	x4, #0x2a                  	// #42
+    1828:	d2800063 	mov	x3, #0x3                   	// #3
+    182c:	17ffffe4 	b	17bc <get_tcr+0x64>
+    1830:	d2800504 	mov	x4, #0x28                  	// #40
+    1834:	d2800043 	mov	x3, #0x2                   	// #2
+    1838:	17ffffe1 	b	17bc <get_tcr+0x64>
+    183c:	d2800404 	mov	x4, #0x20                  	// #32
+    1840:	17ffffdf 	b	17bc <get_tcr+0x64>
+
+
+rk3528-h96max-armbian/armbian-build/cache/sources/u-boot-worktree/u-boot-rockchip64/next-dev-v2024.10/spl/u-boot-spl:     file format elf64-littleaarch64
+
+
+Disassembly of section .text:
+
+00000000000039e8 <board_init_f_alloc_reserve>:
+    39e8:	d1420000 	sub	x0, x0, #0x80, lsl #12
+    39ec:	d1070000 	sub	x0, x0, #0x1c0
+    39f0:	927cec00 	and	x0, x0, #0xfffffffffffffff0
+    39f4:	d65f03c0 	ret
+
+00000000000039f8 <board_init_f_init_reserve>:
+    39f8:	a9be7bfd 	stp	x29, x30, [sp, #-32]!
+    39fc:	d2803802 	mov	x2, #0x1c0                 	// #448
+    3a00:	52800001 	mov	w1, #0x0                   	// #0
+    3a04:	910003fd 	mov	x29, sp
+    3a08:	f9000bf3 	str	x19, [sp, #16]
+    3a0c:	aa0003f3 	mov	x19, x0
+    3a10:	91070273 	add	x19, x19, #0x1c0
+    3a14:	940016e8 	bl	95b4 <memset>
+    3a18:	f9009253 	str	x19, [x18, #288]
+    3a1c:	f9400bf3 	ldr	x19, [sp, #16]
+    3a20:	a8c27bfd 	ldp	x29, x30, [sp], #32
+    3a24:	d65f03c0 	ret

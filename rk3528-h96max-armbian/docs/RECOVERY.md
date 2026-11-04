@@ -33,7 +33,7 @@ A separate historical boot failure involved a diagnostic service ordered before 
 
 ## Incident: initramfs caused by stale SD rootfs metadata (2026-11-03)
 
-**Status:** the SD card was repaired and passed offline checks. A successful boot of the repaired card on the H96 Max has not yet been reported. This is a different failure from the October 31 SDMMC initialization issue described above.
+**Status:** after repair, successful SD boot was confirmed over SSH. Rootfs expanded from 1,572,608 to 7,643,136 blocks and Ethernet/Wi-Fi connected. This is a different failure from the October 31 SDMMC initialization issue described above.
 
 ### 1. Symptoms and initial classification
 
@@ -116,7 +116,7 @@ The 4 KiB replacement was justified by the complete comparison against this exac
 | DTB/kernel/driver/firmware | No replacement needed for this repair; Wi-Fi 50 MHz and SD 25 MHz settings retained |
 | GPIO38/FD655/Bluetooth | Bundled radio metadata and enabled-service configuration remained present; this was not a runtime radio test |
 | Android/eMMC | Not modified |
-| Final state | Card unmounted and safely ejected; hardware boot confirmation pending |
+| Final state | SD boot subsequently confirmed over SSH; root expanded and Ethernet/Wi-Fi connected |
 
 ### 6. Next checks and prevention
 
@@ -157,4 +157,4 @@ Do not load Android kernel 5.10 modules into Armbian kernel 6.1. Android compari
 
 ## eMMC remains a separate task
 
-The current DTB disables eMMC; no eMMC installation has been validated. An earlier `emmc-enabled-from-baseline.dtb` was only prepared, then postponed and reverted on SD. Do not apply it without comparing against the current baseline. Follow the [SD-to-eMMC plan](SD_TO_EMMC_INSTALLATION.md): identify hardware, back up Android, establish USB recovery and verify a boot method before writing eMMC.
+The generic image DTB disables eMMC. The project box now uses a staged candidate that successfully detects its 64 GB eMMC; standalone eMMC boot remains unverified. An earlier `emmc-enabled-from-baseline.dtb` was only prepared, then postponed and reverted on SD. Do not apply it without comparing against the current baseline. Follow the [SD-to-eMMC plan](SD_TO_EMMC_INSTALLATION.md): identify hardware, back up Android, establish USB recovery and verify a boot method before writing eMMC.

@@ -1,0 +1,1682 @@
+{
+  "status": "STATIC_CHECKS_PASS_RUNTIME_NOT_TESTED",
+  "tree": "/tmp/h96-spl-hardening-20261104",
+  "spl": {
+    "sha256": "cf82116d95205d541482740f534d99bdcb21a4924c429fd2f72f4a69159282ea",
+    "size": 247300,
+    "drivers": [
+      {
+        "driver": "arasan_sdhci_drv",
+        "address": "0x39678",
+        "table": "0x2c528",
+        "matches": [
+          {
+            "pointer": "0x2878c",
+            "compatible": "arasan,sdhci-5.1"
+          },
+          {
+            "pointer": "0x2879d",
+            "compatible": "snps,dwcmshc-sdhci"
+          },
+          {
+            "pointer": "0x287b0",
+            "compatible": "rockchip,rk3528-dwcmshc"
+          },
+          {
+            "pointer": "0x287c8",
+            "compatible": "rockchip,rk3562-dwcmshc"
+          },
+          {
+            "pointer": "0x287e0",
+            "compatible": "rockchip,rk3576-dwcmshc"
+          },
+          {
+            "pointer": "0x287f8",
+            "compatible": "rockchip,rk3588-dwcmshc"
+          }
+        ]
+      },
+      {
+        "driver": "clk_fixed_rate",
+        "address": "0x396f0",
+        "table": "0x2b6a8",
+        "matches": [
+          {
+            "pointer": "0x283db",
+            "compatible": "fixed-clock"
+          }
+        ]
+      },
+      {
+        "driver": "firmware",
+        "address": "0x39768",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "generic_syscon",
+        "address": "0x397e0",
+        "table": "0x2c098",
+        "matches": [
+          {
+            "pointer": "0x267b6",
+            "compatible": "syscon"
+          }
+        ]
+      },
+      {
+        "driver": "mmc",
+        "address": "0x39858",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "mmc_blk",
+        "address": "0x398d0",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "mod_exp_sw",
+        "address": "0x39948",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "mtd_blk",
+        "address": "0x399c0",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "ns16550_serial",
+        "address": "0x39a38",
+        "table": "0x2ff70",
+        "matches": [
+          {
+            "pointer": "0x28ba1",
+            "compatible": "ns16550"
+          },
+          {
+            "pointer": "0x28ba9",
+            "compatible": "ns16550a"
+          },
+          {
+            "pointer": "0x28bb2",
+            "compatible": "ingenic,jz4780-uart"
+          },
+          {
+            "pointer": "0x28bc6",
+            "compatible": "nvidia,tegra20-uart"
+          },
+          {
+            "pointer": "0x28bda",
+            "compatible": "snps,dw-apb-uart"
+          },
+          {
+            "pointer": "0x28beb",
+            "compatible": "ti,omap2-uart"
+          },
+          {
+            "pointer": "0x28bf9",
+            "compatible": "ti,omap3-uart"
+          },
+          {
+            "pointer": "0x28c07",
+            "compatible": "ti,omap4-uart"
+          },
+          {
+            "pointer": "0x28c15",
+            "compatible": "ti,am3352-uart"
+          },
+          {
+            "pointer": "0x28c24",
+            "compatible": "ti,am4372-uart"
+          },
+          {
+            "pointer": "0x28c33",
+            "compatible": "ti,dra742-uart"
+          }
+        ]
+      },
+      {
+        "driver": "pinconfig_generic",
+        "address": "0x39ab0",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "pinctrl_rk3528",
+        "address": "0x39b28",
+        "table": "0x2fc98",
+        "matches": [
+          {
+            "pointer": "0x28b7a",
+            "compatible": "rockchip,rk3528-pinctrl"
+          }
+        ]
+      },
+      {
+        "driver": "pinctrl_rockchip",
+        "address": "0x39ba0",
+        "table": "0x2c658",
+        "matches": [
+          {
+            "pointer": "0x28821",
+            "compatible": "rockchip,px30-pinctrl"
+          },
+          {
+            "pointer": "0x28837",
+            "compatible": "rockchip,rv1108-pinctrl"
+          },
+          {
+            "pointer": "0x2884f",
+            "compatible": "rockchip,rv1126-pinctrl-legency"
+          },
+          {
+            "pointer": "0x2886f",
+            "compatible": "rockchip,rk1808-pinctrl"
+          },
+          {
+            "pointer": "0x28887",
+            "compatible": "rockchip,rk2928-pinctrl"
+          },
+          {
+            "pointer": "0x2889f",
+            "compatible": "rockchip,rk3036-pinctrl"
+          },
+          {
+            "pointer": "0x288b7",
+            "compatible": "rockchip,rk3066a-pinctrl"
+          },
+          {
+            "pointer": "0x288d0",
+            "compatible": "rockchip,rk3066b-pinctrl"
+          },
+          {
+            "pointer": "0x288e9",
+            "compatible": "rockchip,rk3128-pinctrl"
+          },
+          {
+            "pointer": "0x28901",
+            "compatible": "rockchip,rk3188-pinctrl"
+          },
+          {
+            "pointer": "0x28919",
+            "compatible": "rockchip,rk3228-pinctrl"
+          },
+          {
+            "pointer": "0x28931",
+            "compatible": "rockchip,rk3288-pinctrl"
+          },
+          {
+            "pointer": "0x28949",
+            "compatible": "rockchip,rk3308-pinctrl"
+          },
+          {
+            "pointer": "0x28961",
+            "compatible": "rockchip,rk3328-pinctrl"
+          },
+          {
+            "pointer": "0x28979",
+            "compatible": "rockchip,rk3368-pinctrl"
+          },
+          {
+            "pointer": "0x28991",
+            "compatible": "rockchip,rk3399-pinctrl"
+          }
+        ]
+      },
+      {
+        "driver": "psci",
+        "address": "0x39c18",
+        "table": "0x2c420",
+        "matches": [
+          {
+            "pointer": "0x286a0",
+            "compatible": "arm,psci"
+          },
+          {
+            "pointer": "0x2a279",
+            "compatible": "arm,psci-0.2"
+          },
+          {
+            "pointer": "0x2a294",
+            "compatible": "arm,psci-1.0"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_crypto_v2",
+        "address": "0x39c90",
+        "table": "0x2c108",
+        "matches": [
+          {
+            "pointer": "0x284b0",
+            "compatible": "rockchip,px30-crypto"
+          },
+          {
+            "pointer": "0x284c5",
+            "compatible": "rockchip,rk1808-crypto"
+          },
+          {
+            "pointer": "0x284dc",
+            "compatible": "rockchip,rk3308-crypto"
+          },
+          {
+            "pointer": "0x284f3",
+            "compatible": "rockchip,rv1126-crypto"
+          },
+          {
+            "pointer": "0x2850a",
+            "compatible": "rockchip,rk3568-crypto"
+          },
+          {
+            "pointer": "0x28521",
+            "compatible": "rockchip,rk3588-crypto"
+          },
+          {
+            "pointer": "0x28538",
+            "compatible": "rockchip,crypto-v3"
+          },
+          {
+            "pointer": "0x2854b",
+            "compatible": "rockchip,crypto-v4"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_dwmmc_drv",
+        "address": "0x39d08",
+        "table": "0x2c4b8",
+        "matches": [
+          {
+            "pointer": "0x286c1",
+            "compatible": "rockchip,rk3288-dw-mshc"
+          },
+          {
+            "pointer": "0x286d9",
+            "compatible": "rockchip,rk2928-dw-mshc"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_otp",
+        "address": "0x39d80",
+        "table": "0x2c200",
+        "matches": [
+          {
+            "pointer": "0x28570",
+            "compatible": "rockchip,px30-otp"
+          },
+          {
+            "pointer": "0x28582",
+            "compatible": "rockchip,px30s-otp"
+          },
+          {
+            "pointer": "0x28595",
+            "compatible": "rockchip,rk3308-otp"
+          },
+          {
+            "pointer": "0x285a9",
+            "compatible": "rockchip,rk3308bs-otp"
+          },
+          {
+            "pointer": "0x285bf",
+            "compatible": "rockchip,rk3506-otp"
+          },
+          {
+            "pointer": "0x285d3",
+            "compatible": "rockchip,rk3528-otp"
+          },
+          {
+            "pointer": "0x285e7",
+            "compatible": "rockchip,rk3562-otp"
+          },
+          {
+            "pointer": "0x285fb",
+            "compatible": "rockchip,rk3568-otp"
+          },
+          {
+            "pointer": "0x2860f",
+            "compatible": "rockchip,rk3576-otp"
+          },
+          {
+            "pointer": "0x28623",
+            "compatible": "rockchip,rk3588-otp"
+          },
+          {
+            "pointer": "0x28637",
+            "compatible": "rockchip,rv1106-otp"
+          },
+          {
+            "pointer": "0x2864b",
+            "compatible": "rockchip,rv1126-otp"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_reset",
+        "address": "0x39df8",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "rockchip_rk3528_cru",
+        "address": "0x39e70",
+        "table": "0x2b768",
+        "matches": [
+          {
+            "pointer": "0x28404",
+            "compatible": "rockchip,rk3528-cru"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_rk3528_grf_cru",
+        "address": "0x39ee8",
+        "table": "0x2b788",
+        "matches": [
+          {
+            "pointer": "0x28430",
+            "compatible": "rockchip,rk3528-grf-cru"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_secure_otp",
+        "address": "0x39f60",
+        "table": "0x24e50",
+        "matches": [
+          {
+            "pointer": "0x28673",
+            "compatible": "rockchip,rk3528-secure-otp"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_sfc_driver",
+        "address": "0x39fd8",
+        "table": "0x317d8",
+        "matches": [
+          {
+            "pointer": "0x293d7",
+            "compatible": "rockchip,fspi"
+          },
+          {
+            "pointer": "0x293e5",
+            "compatible": "rockchip,sfc"
+          }
+        ]
+      },
+      {
+        "driver": "root_driver",
+        "address": "0x3a050",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "scmi_clock",
+        "address": "0x3a0c8",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "simple_bus_drv",
+        "address": "0x3a140",
+        "table": "0x2c068",
+        "matches": [
+          {
+            "pointer": "0x28470",
+            "compatible": "simple-bus"
+          },
+          {
+            "pointer": "0x2847b",
+            "compatible": "simple-mfd"
+          }
+        ]
+      },
+      {
+        "driver": "spi_flash_std",
+        "address": "0x3a1b8",
+        "table": "0x30058",
+        "matches": [
+          {
+            "pointer": "0x28c50",
+            "compatible": "jedec,spi-nor"
+          }
+        ]
+      },
+      {
+        "driver": "spi_generic_drv",
+        "address": "0x3a230",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "spinand",
+        "address": "0x3a2a8",
+        "table": "0x39510",
+        "matches": [
+          {
+            "pointer": "0x29b3d",
+            "compatible": "spi-nand"
+          }
+        ]
+      },
+      {
+        "driver": "syscon_rk3528",
+        "address": "0x3a320",
+        "table": "0x2b328",
+        "matches": [
+          {
+            "pointer": "0x267bd",
+            "compatible": "rockchip,rk3528-grf"
+          }
+        ]
+      },
+      {
+        "driver": "sysreset_rockchip",
+        "address": "0x3a398",
+        "table": "0x0",
+        "matches": []
+      }
+    ]
+  },
+  "uboot": {
+    "drivers": [
+      {
+        "driver": "a_psci_sysreset",
+        "address": "0x2f9390",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "adc_key",
+        "address": "0x2f9408",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "adc_key_bus",
+        "address": "0x2f9480",
+        "table": "0x2ac7c8",
+        "matches": [
+          {
+            "pointer": "0x2d95d5",
+            "compatible": "adc-keys"
+          }
+        ]
+      },
+      {
+        "driver": "arasan_sdhci_drv",
+        "address": "0x2f94f8",
+        "table": "0x2b77e8",
+        "matches": [
+          {
+            "pointer": "0x2da362",
+            "compatible": "arasan,sdhci-5.1"
+          },
+          {
+            "pointer": "0x2da373",
+            "compatible": "snps,dwcmshc-sdhci"
+          },
+          {
+            "pointer": "0x2da386",
+            "compatible": "rockchip,rk3528-dwcmshc"
+          },
+          {
+            "pointer": "0x2da39e",
+            "compatible": "rockchip,rk3562-dwcmshc"
+          },
+          {
+            "pointer": "0x2da3b6",
+            "compatible": "rockchip,rk3576-dwcmshc"
+          },
+          {
+            "pointer": "0x2da3ce",
+            "compatible": "rockchip,rk3588-dwcmshc"
+          }
+        ]
+      },
+      {
+        "driver": "clk_fixed_rate",
+        "address": "0x2f9570",
+        "table": "0x2aca18",
+        "matches": [
+          {
+            "pointer": "0x2d9343",
+            "compatible": "fixed-clock"
+          }
+        ]
+      },
+      {
+        "driver": "clk_inno_hdmi",
+        "address": "0x2f95e8",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "dwc3_generic_host",
+        "address": "0x2f9660",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "dwc3_generic_wrapper",
+        "address": "0x2f96d8",
+        "table": "0x2ad9f8",
+        "matches": [
+          {
+            "pointer": "0x2e1808",
+            "compatible": "xlnx,zynqmp-dwc3"
+          },
+          {
+            "pointer": "0x2e1819",
+            "compatible": "ti,keystone-dwc3"
+          },
+          {
+            "pointer": "0x2e182a",
+            "compatible": "ti,dwc3"
+          },
+          {
+            "pointer": "0x2e17da",
+            "compatible": "ti,am437x-dwc3"
+          },
+          {
+            "pointer": "0x2e1832",
+            "compatible": "rockchip,rk3328-dwc3"
+          },
+          {
+            "pointer": "0x2e17c5",
+            "compatible": "rockchip,rk3399-dwc3"
+          },
+          {
+            "pointer": "0x2e1847",
+            "compatible": "rockchip,rk3576-dwc3"
+          }
+        ]
+      },
+      {
+        "driver": "ehci_generic",
+        "address": "0x2f9750",
+        "table": "0x2ada78",
+        "matches": [
+          {
+            "pointer": "0x2e2b26",
+            "compatible": "generic-ehci"
+          }
+        ]
+      },
+      {
+        "driver": "eth_gmac_rockchip",
+        "address": "0x2f97c8",
+        "table": "0x2b66b8",
+        "matches": [
+          {
+            "pointer": "0x2e041b",
+            "compatible": "rockchip,rk3528-gmac"
+          }
+        ]
+      },
+      {
+        "driver": "eth_phy_generic_drv",
+        "address": "0x2f9840",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "firmware",
+        "address": "0x2f98b8",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "fixed_regulator",
+        "address": "0x2f9930",
+        "table": "0x2add60",
+        "matches": [
+          {
+            "pointer": "0x2e0bc1",
+            "compatible": "regulator-fixed"
+          }
+        ]
+      },
+      {
+        "driver": "generic_syscon",
+        "address": "0x2f99a8",
+        "table": "0x2af4c8",
+        "matches": [
+          {
+            "pointer": "0x2ccd56",
+            "compatible": "syscon"
+          }
+        ]
+      },
+      {
+        "driver": "gpio_regulator",
+        "address": "0x2f9a20",
+        "table": "0x2b0290",
+        "matches": [
+          {
+            "pointer": "0x2e0be0",
+            "compatible": "regulator-gpio"
+          }
+        ]
+      },
+      {
+        "driver": "gpio_rockchip",
+        "address": "0x2f9a98",
+        "table": "0x2b66d8",
+        "matches": [
+          {
+            "pointer": "0x2de919",
+            "compatible": "rockchip,gpio-bank"
+          }
+        ]
+      },
+      {
+        "driver": "i2c_generic_chip_drv",
+        "address": "0x2f9b10",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "i2c_rockchip",
+        "address": "0x2f9b88",
+        "table": "0x2b66f8",
+        "matches": [
+          {
+            "pointer": "0x2dea35",
+            "compatible": "rockchip,rk3066-i2c"
+          },
+          {
+            "pointer": "0x2dea49",
+            "compatible": "rockchip,rk3188-i2c"
+          },
+          {
+            "pointer": "0x2dea5d",
+            "compatible": "rockchip,rk3288-i2c"
+          },
+          {
+            "pointer": "0x2dea71",
+            "compatible": "rockchip,rk3328-i2c"
+          },
+          {
+            "pointer": "0x2dea85",
+            "compatible": "rockchip,rk3399-i2c"
+          },
+          {
+            "pointer": "0x2dea99",
+            "compatible": "rockchip,rk3228-i2c"
+          },
+          {
+            "pointer": "0x2deaad",
+            "compatible": "rockchip,rv1108-i2c"
+          }
+        ]
+      },
+      {
+        "driver": "inno_hdmi_phy",
+        "address": "0x2f9c00",
+        "table": "0x2b0c98",
+        "matches": [
+          {
+            "pointer": "0x2d9ffc",
+            "compatible": "rockchip,rk3328-hdmi-phy"
+          },
+          {
+            "pointer": "0x2da015",
+            "compatible": "rockchip,rk3228-hdmi-phy"
+          },
+          {
+            "pointer": "0x2da02e",
+            "compatible": "rockchip,rk3528-hdmi-phy"
+          }
+        ]
+      },
+      {
+        "driver": "mmc",
+        "address": "0x2f9c78",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "mmc_blk",
+        "address": "0x2f9cf0",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "mod_exp_sw",
+        "address": "0x2f9d68",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "mtd_blk",
+        "address": "0x2f9de0",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "ns16550_serial",
+        "address": "0x2f9e58",
+        "table": "0x2b1c48",
+        "matches": [
+          {
+            "pointer": "0x2e0c91",
+            "compatible": "ns16550"
+          },
+          {
+            "pointer": "0x2e0c99",
+            "compatible": "ns16550a"
+          },
+          {
+            "pointer": "0x2e0ca2",
+            "compatible": "ingenic,jz4780-uart"
+          },
+          {
+            "pointer": "0x2e0cb6",
+            "compatible": "nvidia,tegra20-uart"
+          },
+          {
+            "pointer": "0x2e0cca",
+            "compatible": "snps,dw-apb-uart"
+          },
+          {
+            "pointer": "0x2e0cdb",
+            "compatible": "ti,omap2-uart"
+          },
+          {
+            "pointer": "0x2e0ce9",
+            "compatible": "ti,omap3-uart"
+          },
+          {
+            "pointer": "0x2e0cf7",
+            "compatible": "ti,omap4-uart"
+          },
+          {
+            "pointer": "0x2e0d05",
+            "compatible": "ti,am3352-uart"
+          },
+          {
+            "pointer": "0x2e0d14",
+            "compatible": "ti,am4372-uart"
+          },
+          {
+            "pointer": "0x2e0d23",
+            "compatible": "ti,dra742-uart"
+          }
+        ]
+      },
+      {
+        "driver": "ohci_generic",
+        "address": "0x2f9ed0",
+        "table": "0x2b1d30",
+        "matches": [
+          {
+            "pointer": "0x2e2b0c",
+            "compatible": "generic-ohci"
+          }
+        ]
+      },
+      {
+        "driver": "pinconfig_generic",
+        "address": "0x2f9f48",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "pinctrl_rk3528",
+        "address": "0x2f9fc0",
+        "table": "0x2b5680",
+        "matches": [
+          {
+            "pointer": "0x2d9990",
+            "compatible": "rockchip,rk3528-pinctrl"
+          }
+        ]
+      },
+      {
+        "driver": "pinctrl_rockchip",
+        "address": "0x2fa038",
+        "table": "0x2b6a78",
+        "matches": [
+          {
+            "pointer": "0x2d9637",
+            "compatible": "rockchip,px30-pinctrl"
+          },
+          {
+            "pointer": "0x2d964d",
+            "compatible": "rockchip,rv1108-pinctrl"
+          },
+          {
+            "pointer": "0x2d9665",
+            "compatible": "rockchip,rv1126-pinctrl-legency"
+          },
+          {
+            "pointer": "0x2d9685",
+            "compatible": "rockchip,rk1808-pinctrl"
+          },
+          {
+            "pointer": "0x2d969d",
+            "compatible": "rockchip,rk2928-pinctrl"
+          },
+          {
+            "pointer": "0x2d96b5",
+            "compatible": "rockchip,rk3036-pinctrl"
+          },
+          {
+            "pointer": "0x2d96cd",
+            "compatible": "rockchip,rk3066a-pinctrl"
+          },
+          {
+            "pointer": "0x2d96e6",
+            "compatible": "rockchip,rk3066b-pinctrl"
+          },
+          {
+            "pointer": "0x2d96ff",
+            "compatible": "rockchip,rk3128-pinctrl"
+          },
+          {
+            "pointer": "0x2d9717",
+            "compatible": "rockchip,rk3188-pinctrl"
+          },
+          {
+            "pointer": "0x2d972f",
+            "compatible": "rockchip,rk3228-pinctrl"
+          },
+          {
+            "pointer": "0x2d9747",
+            "compatible": "rockchip,rk3288-pinctrl"
+          },
+          {
+            "pointer": "0x2d975f",
+            "compatible": "rockchip,rk3308-pinctrl"
+          },
+          {
+            "pointer": "0x2d9777",
+            "compatible": "rockchip,rk3328-pinctrl"
+          },
+          {
+            "pointer": "0x2d978f",
+            "compatible": "rockchip,rk3368-pinctrl"
+          },
+          {
+            "pointer": "0x2d97a7",
+            "compatible": "rockchip,rk3399-pinctrl"
+          }
+        ]
+      },
+      {
+        "driver": "psci",
+        "address": "0x2fa0b0",
+        "table": "0x2b2630",
+        "matches": [
+          {
+            "pointer": "0x2da152",
+            "compatible": "arm,psci"
+          },
+          {
+            "pointer": "0x2dde5f",
+            "compatible": "arm,psci-0.2"
+          },
+          {
+            "pointer": "0x2dde6c",
+            "compatible": "arm,psci-1.0"
+          }
+        ]
+      },
+      {
+        "driver": "pwm_backlight",
+        "address": "0x2fa128",
+        "table": "0x2b2670",
+        "matches": [
+          {
+            "pointer": "0x2d9ac6",
+            "compatible": "pwm-backlight"
+          }
+        ]
+      },
+      {
+        "driver": "pwm_regulator",
+        "address": "0x2fa1a0",
+        "table": "0x2b2830",
+        "matches": [
+          {
+            "pointer": "0x2e0ba3",
+            "compatible": "pwm-regulator"
+          }
+        ]
+      },
+      {
+        "driver": "rk_pwm",
+        "address": "0x2fa218",
+        "table": "0x2b6180",
+        "matches": [
+          {
+            "pointer": "0x2da437",
+            "compatible": "rockchip,rk2928-pwm"
+          },
+          {
+            "pointer": "0x2da44b",
+            "compatible": "rockchip,rk3288-pwm"
+          },
+          {
+            "pointer": "0x2da45f",
+            "compatible": "rockchip,rk3328-pwm"
+          },
+          {
+            "pointer": "0x2da473",
+            "compatible": "rockchip,vop-pwm"
+          },
+          {
+            "pointer": "0x2da484",
+            "compatible": "rockchip,rk3399-pwm"
+          },
+          {
+            "pointer": "0x2da498",
+            "compatible": "rockchip,rk3576-pwm"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_crypto_v2",
+        "address": "0x2fa290",
+        "table": "0x2b63c0",
+        "matches": [
+          {
+            "pointer": "0x2d94b3",
+            "compatible": "rockchip,px30-crypto"
+          },
+          {
+            "pointer": "0x2d94c8",
+            "compatible": "rockchip,rk1808-crypto"
+          },
+          {
+            "pointer": "0x2d94df",
+            "compatible": "rockchip,rk3308-crypto"
+          },
+          {
+            "pointer": "0x2d94f6",
+            "compatible": "rockchip,rv1126-crypto"
+          },
+          {
+            "pointer": "0x2d950d",
+            "compatible": "rockchip,rk3568-crypto"
+          },
+          {
+            "pointer": "0x2d9524",
+            "compatible": "rockchip,rk3588-crypto"
+          },
+          {
+            "pointer": "0x2d953b",
+            "compatible": "rockchip,crypto-v3"
+          },
+          {
+            "pointer": "0x2d954e",
+            "compatible": "rockchip,crypto-v4"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_display",
+        "address": "0x2fa308",
+        "table": "0x2b64c8",
+        "matches": [
+          {
+            "pointer": "0x2d9ba0",
+            "compatible": "rockchip,display-subsystem"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_drm_tve",
+        "address": "0x2fa380",
+        "table": "0x2b6548",
+        "matches": [
+          {
+            "pointer": "0x2da058",
+            "compatible": "rockchip,rk3036-tve"
+          },
+          {
+            "pointer": "0x2da06c",
+            "compatible": "rockchip,rk312x-tve"
+          },
+          {
+            "pointer": "0x2da080",
+            "compatible": "rockchip,rk322x-tve"
+          },
+          {
+            "pointer": "0x2da094",
+            "compatible": "rockchip,rk3328-tve"
+          },
+          {
+            "pointer": "0x2da0a8",
+            "compatible": "rockchip,rk3528-tve"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_dw_hdmi",
+        "address": "0x2fa3f8",
+        "table": "0x2b65f8",
+        "matches": [
+          {
+            "pointer": "0x2d9e86",
+            "compatible": "rockchip,rk3528-dw-hdmi"
+          },
+          {
+            "pointer": "0x2d9e9e",
+            "compatible": "rockchip,rk3568-dw-hdmi"
+          },
+          {
+            "pointer": "0x2d9eb6",
+            "compatible": "rockchip,rk3399-dw-hdmi"
+          },
+          {
+            "pointer": "0x2d9ece",
+            "compatible": "rockchip,rk3368-dw-hdmi"
+          },
+          {
+            "pointer": "0x2d9ee6",
+            "compatible": "rockchip,rk3288-dw-hdmi"
+          },
+          {
+            "pointer": "0x2d9efe",
+            "compatible": "rockchip,rk3328-dw-hdmi"
+          },
+          {
+            "pointer": "0x2d9f16",
+            "compatible": "rockchip,rk3128-inno-hdmi"
+          },
+          {
+            "pointer": "0x2d9f30",
+            "compatible": "rockchip,rk3228-dw-hdmi"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_dwmmc_drv",
+        "address": "0x2fa470",
+        "table": "0x2b6688",
+        "matches": [
+          {
+            "pointer": "0x2da297",
+            "compatible": "rockchip,rk3288-dw-mshc"
+          },
+          {
+            "pointer": "0x2da2af",
+            "compatible": "rockchip,rk2928-dw-mshc"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_naneng_combphy",
+        "address": "0x2fa4e8",
+        "table": "0x2b6260",
+        "matches": [
+          {
+            "pointer": "0x2d9607",
+            "compatible": "rockchip,rk3528-naneng-combphy"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_otp",
+        "address": "0x2fa560",
+        "table": "0x2b6988",
+        "matches": [
+          {
+            "pointer": "0x2da190",
+            "compatible": "rockchip,px30-otp"
+          },
+          {
+            "pointer": "0x2da1a2",
+            "compatible": "rockchip,px30s-otp"
+          },
+          {
+            "pointer": "0x2da1b5",
+            "compatible": "rockchip,rk3308-otp"
+          },
+          {
+            "pointer": "0x2da1c9",
+            "compatible": "rockchip,rk3308bs-otp"
+          },
+          {
+            "pointer": "0x2da1df",
+            "compatible": "rockchip,rk3506-otp"
+          },
+          {
+            "pointer": "0x2da1f3",
+            "compatible": "rockchip,rk3528-otp"
+          },
+          {
+            "pointer": "0x2da207",
+            "compatible": "rockchip,rk3562-otp"
+          },
+          {
+            "pointer": "0x2da21b",
+            "compatible": "rockchip,rk3568-otp"
+          },
+          {
+            "pointer": "0x2da22f",
+            "compatible": "rockchip,rk3576-otp"
+          },
+          {
+            "pointer": "0x2da243",
+            "compatible": "rockchip,rk3588-otp"
+          },
+          {
+            "pointer": "0x2da257",
+            "compatible": "rockchip,rv1106-otp"
+          },
+          {
+            "pointer": "0x2da26b",
+            "compatible": "rockchip,rv1126-otp"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_reset",
+        "address": "0x2fa5d8",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "rockchip_rk3528_cru",
+        "address": "0x2fa650",
+        "table": "0x2b4fd0",
+        "matches": [
+          {
+            "pointer": "0x2d9363",
+            "compatible": "rockchip,rk3528-cru"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_rk3528_grf_cru",
+        "address": "0x2fa6c8",
+        "table": "0x2b5080",
+        "matches": [
+          {
+            "pointer": "0x2d938f",
+            "compatible": "rockchip,rk3528-grf-cru"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_rng",
+        "address": "0x2fa740",
+        "table": "0x2b6c30",
+        "matches": [
+          {
+            "pointer": "0x2d956e",
+            "compatible": "rockchip,cryptov1-rng"
+          },
+          {
+            "pointer": "0x2d9584",
+            "compatible": "rockchip,cryptov2-rng"
+          },
+          {
+            "pointer": "0x2d959a",
+            "compatible": "rockchip,trngv1"
+          },
+          {
+            "pointer": "0x2d95aa",
+            "compatible": "rockchip,rkrng"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_saradc_v2",
+        "address": "0x2fa7b8",
+        "table": "0x2b6c88",
+        "matches": [
+          {
+            "pointer": "0x2da0cf",
+            "compatible": "rockchip,rk3588-saradc"
+          },
+          {
+            "pointer": "0x2da0e6",
+            "compatible": "rockchip,rk3528-saradc"
+          },
+          {
+            "pointer": "0x2da0fd",
+            "compatible": "rockchip,rk3562-saradc"
+          },
+          {
+            "pointer": "0x2da114",
+            "compatible": "rockchip,rv1106-saradc"
+          },
+          {
+            "pointer": "0x2da12b",
+            "compatible": "rockchip,rv1103b-saradc"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_sfc_driver",
+        "address": "0x2fa830",
+        "table": "0x2b6d10",
+        "matches": [
+          {
+            "pointer": "0x2e0e7c",
+            "compatible": "rockchip,fspi"
+          },
+          {
+            "pointer": "0x2e0e8a",
+            "compatible": "rockchip,sfc"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_usb2phy",
+        "address": "0x2fa8a8",
+        "table": "0x2b6da0",
+        "matches": [
+          {
+            "pointer": "0x2d95ef",
+            "compatible": "rockchip,rk3528-usb2phy"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_usb2phy_port",
+        "address": "0x2fa920",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "rockchip_vop",
+        "address": "0x2fa998",
+        "table": "0x2b6ed0",
+        "matches": [
+          {
+            "pointer": "0x2d9bcd",
+            "compatible": "rockchip,rk3036-vop"
+          },
+          {
+            "pointer": "0x2d9be1",
+            "compatible": "rockchip,rv1108-vop"
+          },
+          {
+            "pointer": "0x2d9bf5",
+            "compatible": "rockchip,rv1106-vop"
+          },
+          {
+            "pointer": "0x2d9c09",
+            "compatible": "rockchip,rv1126-vop"
+          },
+          {
+            "pointer": "0x2d9c1d",
+            "compatible": "rockchip,rk3126-vop"
+          },
+          {
+            "pointer": "0x2d9c31",
+            "compatible": "rockchip,px30-vop-lit"
+          },
+          {
+            "pointer": "0x2d9c47",
+            "compatible": "rockchip,px30-vop-big"
+          },
+          {
+            "pointer": "0x2d9c5d",
+            "compatible": "rockchip,rk3308-vop"
+          },
+          {
+            "pointer": "0x2d9c71",
+            "compatible": "rockchip,rk1808-vop-lit"
+          },
+          {
+            "pointer": "0x2d9c89",
+            "compatible": "rockchip,rk3288-vop-big"
+          },
+          {
+            "pointer": "0x2d9ca1",
+            "compatible": "rockchip,rk3288-vop-lit"
+          },
+          {
+            "pointer": "0x2d9cb9",
+            "compatible": "rockchip,rk3368-vop"
+          },
+          {
+            "pointer": "0x2d9ccd",
+            "compatible": "rockchip,rk3366-vop"
+          },
+          {
+            "pointer": "0x2d9ce1",
+            "compatible": "rockchip,rk3399-vop-big"
+          },
+          {
+            "pointer": "0x2d9cf9",
+            "compatible": "rockchip,rk3399-vop-lit"
+          },
+          {
+            "pointer": "0x2d9d11",
+            "compatible": "rockchip,rk322x-vop"
+          },
+          {
+            "pointer": "0x2d9d25",
+            "compatible": "rockchip,rk3328-vop"
+          },
+          {
+            "pointer": "0x2d9d39",
+            "compatible": "rockchip,rk3506-vop"
+          },
+          {
+            "pointer": "0x2d9d4d",
+            "compatible": "rockchip,rk3528-vop"
+          },
+          {
+            "pointer": "0x2d9d61",
+            "compatible": "rockchip,rk3562-vop"
+          },
+          {
+            "pointer": "0x2d9d75",
+            "compatible": "rockchip,rk3568-vop"
+          },
+          {
+            "pointer": "0x2d9d89",
+            "compatible": "rockchip,rk3576-vop"
+          },
+          {
+            "pointer": "0x2d9d9d",
+            "compatible": "rockchip,rk3576-vop-lit"
+          },
+          {
+            "pointer": "0x2d9db5",
+            "compatible": "rockchip,rk3588-vop"
+          }
+        ]
+      },
+      {
+        "driver": "rockchip_vp",
+        "address": "0x2faa10",
+        "table": "0x2b7060",
+        "matches": [
+          {
+            "pointer": "0x2dc55a",
+            "compatible": "rockchip-vp"
+          }
+        ]
+      },
+      {
+        "driver": "root_driver",
+        "address": "0x2faa88",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "scmi_clock",
+        "address": "0x2fab00",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "scmi_smccc",
+        "address": "0x2fab78",
+        "table": "0x2b77c0",
+        "matches": [
+          {
+            "pointer": "0x2da176",
+            "compatible": "arm,scmi-smc"
+          }
+        ]
+      },
+      {
+        "driver": "simple_bus_drv",
+        "address": "0x2fabf0",
+        "table": "0x2af498",
+        "matches": [
+          {
+            "pointer": "0x2d9473",
+            "compatible": "simple-bus"
+          },
+          {
+            "pointer": "0x2d947e",
+            "compatible": "simple-mfd"
+          }
+        ]
+      },
+      {
+        "driver": "simple_panel",
+        "address": "0x2fac68",
+        "table": "0x2b7bd0",
+        "matches": [
+          {
+            "pointer": "0x2d99f2",
+            "compatible": "simple-panel"
+          },
+          {
+            "pointer": "0x2d99ff",
+            "compatible": "auo,b133xtn01"
+          },
+          {
+            "pointer": "0x2d9a0d",
+            "compatible": "auo,b116xw03"
+          },
+          {
+            "pointer": "0x2d9a1a",
+            "compatible": "auo,b133htn01"
+          }
+        ]
+      },
+      {
+        "driver": "spi_flash_std",
+        "address": "0x2face0",
+        "table": "0x2b7e38",
+        "matches": [
+          {
+            "pointer": "0x2dfa41",
+            "compatible": "jedec,spi-nor"
+          }
+        ]
+      },
+      {
+        "driver": "spi_generic_drv",
+        "address": "0x2fad58",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "spinand",
+        "address": "0x2fadd0",
+        "table": "0x2b95b8",
+        "matches": [
+          {
+            "pointer": "0x2df31c",
+            "compatible": "spi-nand"
+          }
+        ]
+      },
+      {
+        "driver": "syscon_rk3528",
+        "address": "0x2fae48",
+        "table": "0x2b56a0",
+        "matches": [
+          {
+            "pointer": "0x2ccd5d",
+            "compatible": "rockchip,rk3528-grf"
+          }
+        ]
+      },
+      {
+        "driver": "sysreset_rockchip",
+        "address": "0x2faec0",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "sysreset_syscon_reboot",
+        "address": "0x2faf38",
+        "table": "0x2b96a8",
+        "matches": [
+          {
+            "pointer": "0x2da3fd",
+            "compatible": "syscon-reboot-mode"
+          }
+        ]
+      },
+      {
+        "driver": "usb_dev_generic_drv",
+        "address": "0x2fafb0",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "usb_generic_hub",
+        "address": "0x2fb028",
+        "table": "0x2ba808",
+        "matches": [
+          {
+            "pointer": "0x2d4e7a",
+            "compatible": "usb-hub"
+          }
+        ]
+      },
+      {
+        "driver": "usb_mass_storage",
+        "address": "0x2fb0a0",
+        "table": "0x2ba828",
+        "matches": [
+          {
+            "pointer": "0x2d4e93",
+            "compatible": "usb-mass-storage"
+          }
+        ]
+      },
+      {
+        "driver": "usb_storage_blk",
+        "address": "0x2fb118",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "vidconsole_normal",
+        "address": "0x2fb190",
+        "table": "0x0",
+        "matches": []
+      },
+      {
+        "driver": "xhci_dwc3",
+        "address": "0x2fb208",
+        "table": "0x2baec0",
+        "matches": [
+          {
+            "pointer": "0x2e2b42",
+            "compatible": "snps,dwc3"
+          }
+        ]
+      }
+    ]
+  },
+  "embedded_dtb": [
+    {
+      "file": "spl/u-boot-spl.dtb",
+      "model": "Hinlink H28K",
+      "compatible": "hinlink,h28k rockchip,rk3528",
+      "stdout": "/serial@ffa00000",
+      "sd_max_hz": 150000000,
+      "emmc_max_hz": 200000000
+    },
+    {
+      "file": "u-boot.dtb",
+      "model": "Hinlink H28K",
+      "compatible": "hinlink,h28k rockchip,rk3528",
+      "stdout": "/serial@ffa00000",
+      "sd_max_hz": 150000000,
+      "emmc_max_hz": 200000000
+    }
+  ],
+  "fit": {
+    "sha256": "48443a8ec47b05714368612aacf6e9e9de04229eb363e1c0255bdfd20091ff25",
+    "size": 1318912,
+    "configuration": "conf",
+    "references": {
+      "firmware": [
+        "atf-1"
+      ],
+      "loadables": [
+        "uboot",
+        "atf-2",
+        "atf-3"
+      ],
+      "fdt": [
+        "fdt"
+      ]
+    },
+    "images": [
+      {
+        "name": "uboot",
+        "file_offset": 2048,
+        "size": 1145376,
+        "hashes": [
+          {
+            "algorithm": "sha256",
+            "value": "292aad7fc1a6a1704a610f6794d05b499a33342bb4cc4c9fc53e713331f9f7b7",
+            "verified": true
+          }
+        ],
+        "load_start": "0x200000",
+        "load_end": "0x317a20"
+      },
+      {
+        "name": "atf-1",
+        "file_offset": 1147904,
+        "size": 142690,
+        "hashes": [
+          {
+            "algorithm": "sha256",
+            "value": "2493d19c1ea766427c238ac7f34d055548136f97b0206de786173585f595558f",
+            "verified": true
+          }
+        ],
+        "load_start": "0x80000",
+        "load_end": "0xa2d62"
+      },
+      {
+        "name": "atf-2",
+        "file_offset": 1290752,
+        "size": 12288,
+        "hashes": [
+          {
+            "algorithm": "sha256",
+            "value": "8ce368911147cbcc0a3659cbe5af8ca04c9e246eded8fae271d2b6475a2d45d6",
+            "verified": true
+          }
+        ],
+        "load_start": "0xfe48d000",
+        "load_end": "0xfe490000"
+      },
+      {
+        "name": "atf-3",
+        "file_offset": 1303040,
+        "size": 7204,
+        "hashes": [
+          {
+            "algorithm": "sha256",
+            "value": "bc35c9ef8551f05bb8cab064be4b6cbcb98ea10a67ede092016ccce04200bd09",
+            "verified": true
+          }
+        ],
+        "load_start": "0xfe490000",
+        "load_end": "0xfe491c24"
+      },
+      {
+        "name": "fdt",
+        "file_offset": 1310720,
+        "size": 7992,
+        "hashes": [
+          {
+            "algorithm": "sha256",
+            "value": "db83a0738a78c82a0c5e5913509555359900fe2075497362dabc7ad2e4a3decc",
+            "verified": true
+          }
+        ]
+      }
+    ],
+    "load_ranges_disjoint": true
+  }
+}

@@ -1,0 +1,10 @@
+[
+  {
+    "patch": "h96-fix-early-calloc-and-tcr-width.patch",
+    "applies_to_retained_source": true
+  },
+  {
+    "patch": "h96-require-valid-bl31-fit.patch",
+    "applies_to_retained_source": true
+  }
+]

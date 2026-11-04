@@ -1,0 +1,1 @@
+{"status":"HOST_MAPPING_ARITHMETIC_PASS","va_bits":32,"tcr_el3":"0xffffffff80803520","table_reserved_bytes":32768,"tcr_el3_upper_32_bits_nonzero":true,"normal_and_emergency_table_used_bytes":16384,"boundary_checks":4096,"identity_mapping":true,"ram_mmio_attributes":true,"allocation_canary_intact":true,"crash_pointer_outside_va":true}

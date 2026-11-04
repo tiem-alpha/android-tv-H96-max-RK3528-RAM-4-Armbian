@@ -1,0 +1,5 @@
+{
+  "fit_generation_missing_bl31_rejected": true,
+  "complete_configuration_not_emitted": true,
+  "returncode": 1
+}

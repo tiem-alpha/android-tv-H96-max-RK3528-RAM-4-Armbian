@@ -1,0 +1,36 @@
+[
+  {
+    "case": "healthy",
+    "messages": [],
+    "invalid_access": false,
+    "stop": "returned"
+  },
+  {
+    "case": "bad-compatible-word",
+    "messages": [
+      "H96-MATCH-CORRUPT stage=",
+      "guard-selftest",
+      " table=",
+      " expected-table=",
+      " first=",
+      " expected-first=",
+      "\n"
+    ],
+    "invalid_access": false,
+    "stop": "diagnostic-halt"
+  },
+  {
+    "case": "bad-table-address",
+    "messages": [
+      "H96-MATCH-CORRUPT stage=",
+      "guard-selftest",
+      " table=",
+      " expected-table=",
+      " first=",
+      " expected-first=",
+      "\n"
+    ],
+    "invalid_access": false,
+    "stop": "diagnostic-halt"
+  }
+]

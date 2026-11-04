@@ -1,0 +1,20 @@
+[
+  {
+    "deb": "linux-u-boot-rk3528-h96max-vendor_26.11.0-trunk_arm64__2017.09-S39cd-P690a-H1795-Vb472-Bb936-R448a.deb",
+    "spl_offset": 63488,
+    "padded_spl_sha256": "31ee7b50d50d3f75647a5f726d9418bd30f6e762c073fcc643a90eca404700c1",
+    "fspi_string_offset": "0x28e6f",
+    "word_at_31258": "0x28e6f",
+    "code_9410": "8568633822686338",
+    "code_e4f0": "e1031aaac5ebff97a000003418430091000340f960ffffb5"
+  },
+  {
+    "deb": "linux-u-boot-rk3528-h96max-vendor_26.11.0-trunk_arm64__2017.09-S39cd-P00de-H1795-Vb472-Bb936-R448a.deb",
+    "spl_offset": 63488,
+    "padded_spl_sha256": "d7cbf337df71a4256616a20b625c8d9c2b5162164b7d0da893333058173e70f1",
+    "fspi_string_offset": "0x28e6f",
+    "word_at_31258": "0x28e6f",
+    "code_9410": "8568633822686338",
+    "code_e4f0": "e1031aaac5ebff97a000003418430091000340f960ffffb5"
+  }
+]

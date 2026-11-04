@@ -1,0 +1,11 @@
+{
+  "table_address": [
+    "0x39a68"
+  ],
+  "string_pointer": [
+    "0x31258"
+  ],
+  "bad_pointer": [],
+  "driver_list_contiguous": true,
+  "driver_count": 29
+}

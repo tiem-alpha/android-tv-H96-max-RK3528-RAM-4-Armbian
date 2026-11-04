@@ -1,0 +1,42 @@
+{
+  "elf_allocated_sections": [
+    {
+      "address": "0x0",
+      "size": 149276,
+      "matches_bin": true
+    },
+    {
+      "address": "0x24720",
+      "size": 26138,
+      "matches_bin": true
+    },
+    {
+      "address": "0x2ad40",
+      "size": 58216,
+      "matches_bin": true
+    },
+    {
+      "address": "0x390a8",
+      "size": 56,
+      "matches_bin": true
+    },
+    {
+      "address": "0x390e0",
+      "size": 24,
+      "matches_bin": true
+    },
+    {
+      "address": "0x390f8",
+      "size": 6368,
+      "matches_bin": true
+    }
+  ],
+  "sd_capture_matches_idb": true,
+  "sd_capture_matches_fit": true,
+  "recorded_emmc_install_payloads_match": true,
+  "emmc_fresh_readback_record": "PASS",
+  "limitations": [
+    "Recorded eMMC PASS is historical, not a new device read",
+    "Old UART log has no binary hash/fingerprint"
+  ]
+}

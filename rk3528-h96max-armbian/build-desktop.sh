@@ -28,6 +28,8 @@ fi
 for file in \
 	"${repo_dir}/patches/extensions/h96max-aic8801.sh" \
 	"${repo_dir}/patches/patch/u-boot/legacy/u-boot-radxa-rk35xx/defconfig/hinlink_rk3528_defconfig" \
+	"${repo_dir}/patches/patch/u-boot/legacy/u-boot-radxa-rk35xx/h96-fix-early-calloc-and-tcr-width.patch" \
+	"${repo_dir}/patches/patch/u-boot/legacy/u-boot-radxa-rk35xx/h96-require-valid-bl31-fit.patch" \
 	"${repo_dir}/patches/patch/kernel/rk35xx-vendor-6.1/dt/rk3528-h96max-stock-rails-net-hdmi.dts"; do
 	[[ -s "${file}" ]] || { echo "Missing ${file}" >&2; exit 1; }
 done

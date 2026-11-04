@@ -1,0 +1,41 @@
+From: H96 local board maintenance
+Subject: [PATCH] arm: avoid signed TCR masks and unsafe early calloc writes
+
+Use unsigned long constants for 64-bit TCR construction. Reject calloc
+size multiplication overflow and allocation failure before clearing memory.
+These are confirmed source defects, not a proven repair for the SPL abort.
+
+--- a/common/malloc_simple.c
++++ b/common/malloc_simple.c
+@@ -54,10 +54,15 @@
+ #if CONFIG_IS_ENABLED(SYS_MALLOC_SIMPLE)
+ void *calloc(size_t nmemb, size_t elem_size)
+ {
+-	size_t size = nmemb * elem_size;
++	size_t size;
+ 	void *ptr;
+ 
++	if (elem_size && nmemb > (size_t)-1 / elem_size)
++		return NULL;
++	size = nmemb * elem_size;
+ 	ptr = malloc(size);
++	if (!ptr)
++		return NULL;
+ 	memset(ptr, '\0', size);
+ 
+ 	return ptr;
+--- a/arch/arm/include/asm/armv8/mmu.h
++++ b/arch/arm/include/asm/armv8/mmu.h
+@@ -97,9 +97,9 @@
+ #define TCR_TG0_16K		(2 << 14)
+ #define TCR_EPD1_DISABLE	(1 << 23)
+ 
+-#define TCR_EL1_RSVD		(1 << 31)
+-#define TCR_EL2_RSVD		(1 << 31 | 1 << 23)
+-#define TCR_EL3_RSVD		(1 << 31 | 1 << 23)
++#define TCR_EL1_RSVD		(UL(1) << 31)
++#define TCR_EL2_RSVD		(UL(1) << 31 | UL(1) << 23)
++#define TCR_EL3_RSVD		(UL(1) << 31 | UL(1) << 23)
+ 
+ #ifndef __ASSEMBLY__
+ static inline void set_ttbr_tcr_mair(int el, u64 table, u64 tcr, u64 attr)

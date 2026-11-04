@@ -1,0 +1,241 @@
+--- a/drivers/spi/rockchip_sfc.c
++++ b/drivers/spi/rockchip_sfc.c
+@@ -9,6 +9,7 @@
+  */
+ 
+ #include <asm/io.h>
++#include <debug_uart.h>
+ #include <bouncebuf.h>
+ #include <clk.h>
+ #include <dm.h>
+@@ -924,9 +925,12 @@
+ 	.set_mode	= rockchip_sfc_set_mode,
+ };
+ 
++static const char h96_fspi_name[] = "rockchip,fspi";
++static const char h96_sfc_name[] = "rockchip,sfc";
++
+ static const struct udevice_id rockchip_sfc_ids[] = {
+-	{ .compatible = "rockchip,fspi"},
+-	{ .compatible = "rockchip,sfc"},
++	{ .compatible = h96_fspi_name},
++	{ .compatible = h96_sfc_name},
+ 	{},
+ };
+ 
+@@ -939,3 +943,35 @@
+ 	.platdata_auto_alloc_size = sizeof(struct rockchip_sfc),
+ 	.probe  = rockchip_sfc_probe,
+ };
++
++#ifdef CONFIG_SPL_BUILD
++/* Diagnostic only. Compute expected addresses from symbols, never from the table. */
++static ulong h96_load_word(const void *address)
++{
++ ulong value;
++ /* The compiler must not substitute the initializer of this const object. */
++ asm volatile("ldr %0, [%1]" : "=r" (value) : "r" (address) : "memory");
++ return value;
++}
++
++void h96_sfc_validate(const char *stage)
++{
++ const struct driver *drv = DM_GET_DRIVER(rockchip_sfc_driver);
++ const struct udevice_id *ids = (const struct udevice_id *)h96_load_word(&drv->of_match);
++ ulong observed = 0, second = 0, terminator = 0;
++ if (ids == rockchip_sfc_ids) {
++  observed = h96_load_word(&ids[0].compatible);
++  second = h96_load_word(&ids[1].compatible);
++  terminator = h96_load_word(&ids[2].compatible);
++  if (observed == (ulong)h96_fspi_name && second == (ulong)h96_sfc_name && !terminator)
++   return;
++ }
++ printascii("H96-MATCH-CORRUPT stage="); printascii(stage);
++ printascii(" table="); printhex8((ulong)ids >> 32); printhex8((ulong)ids);
++ printascii(" expected-table="); printhex8((ulong)rockchip_sfc_ids);
++ printascii(" first="); printhex8(observed >> 32); printhex8(observed);
++ printascii(" expected-first="); printhex8((ulong)h96_fspi_name);
++ printascii("\n");
++ hang();
++}
++#endif
+--- a/common/spl/spl.c
++++ b/common/spl/spl.c
+@@ -8,6 +8,9 @@
+  */
+ 
+ #include <common.h>
++#include <debug_uart.h>
++#include <asm/arch/bootrom.h>
++#include <asm/io.h>
+ #include <dm.h>
+ #include <spl.h>
+ #include <asm/sections.h>
+@@ -279,6 +282,35 @@
+ }
+ #endif
+ 
++static void h96_trace_hex(const char *name, ulong value)
++{
++ printascii(name); printhex8(value >> 32); printhex8(value); printascii("\n");
++}
++void h96_trace(const char *stage)
++{
++ extern void h96_sfc_validate(const char *stage);
++ h96_sfc_validate(stage);
++ const struct driver *drv = DM_GET_DRIVER(rockchip_sfc_driver);
++ const struct udevice_id *ids = drv->of_match;
++ printascii("H96TRACE "); printascii(stage); printascii("\n");
++ h96_trace_hex("gd=", (ulong)gd);
++ h96_trace_hex("el=", current_el());
++ h96_trace_hex("sctlr=", get_sctlr());
++ h96_trace_hex("boot-source-raw=", readl(BROM_BOOTSOURCE_ID_ADDR));
++ h96_trace_hex("uart-baud=", gd->serial.baudrate);
++ h96_trace_hex("uart-addr=", gd->serial.addr);
++ h96_trace_hex("malloc_base=", gd->malloc_base);
++ h96_trace_hex("malloc_ptr=", gd->malloc_ptr);
++ h96_trace_hex("fdt=", (ulong)gd->fdt_blob);
++ h96_trace_hex("tlb=", gd->arch.tlb_addr);
++ h96_trace_hex("tlb_size=", gd->arch.tlb_size);
++ h96_trace_hex("ids=", (ulong)ids);
++ /* Do not dereference a corrupted match-table address. */
++ if ((ulong)ids >= (ulong)__image_copy_start &&
++     (ulong)ids + sizeof(*ids) <= (ulong)__image_copy_end)
++  h96_trace_hex("compatible=", (ulong)*(const char * volatile *)&ids->compatible);
++}
++
+ static int spl_common_init(bool setup_malloc)
+ {
+ 	int ret;
+@@ -300,7 +332,9 @@
+ 	 * I-cache has been setup at early assembly code by default.
+ 	 */
+ #ifndef CONFIG_SPL_SYS_DCACHE_OFF
++	h96_trace("before-dcache");
+ 	ret = spl_dcache_enable();
++	h96_trace("after-dcache");
+ 	if (ret) {
+ 		debug("spl_dcache_enable() return error %d\n", ret);
+ 		return ret;
+@@ -314,7 +348,9 @@
+ 	}
+ 	bootstage_mark_name(BOOTSTAGE_ID_START_SPL, "spl");
+ 	if (CONFIG_IS_ENABLED(OF_CONTROL) && !CONFIG_IS_ENABLED(OF_PLATDATA)) {
++		h96_trace("before-fdt");
+ 		ret = fdtdec_setup();
++		h96_trace("after-fdt");
+ 		if (ret) {
+ 			debug("fdtdec_setup() returned error %d\n", ret);
+ 			return ret;
+@@ -323,7 +359,9 @@
+ 	if (CONFIG_IS_ENABLED(DM)) {
+ 		bootstage_start(BOOTSTATE_ID_ACCUM_DM_SPL, "dm_spl");
+ 		/* With CONFIG_SPL_OF_PLATDATA, bring in all devices */
++		h96_trace("before-dm-scan");
+ 		ret = dm_init_and_scan(!CONFIG_IS_ENABLED(OF_PLATDATA));
++		h96_trace("after-dm-scan");
+ 		bootstage_accum(BOOTSTATE_ID_ACCUM_DM_SPL);
+ 		if (ret) {
+ 			debug("dm_init_and_scan() returned error %d\n", ret);
+--- a/arch/arm/mach-rockchip/spl.c
++++ b/arch/arm/mach-rockchip/spl.c
+@@ -201,6 +201,8 @@
+ 	struct udevice *dev;
+ #endif
+ #endif
++	extern void h96_trace(const char *stage);
++
+ 	gd->flags = dummy;
+ 	rockchip_stimer_init();
+ #define EARLY_UART
+@@ -216,7 +218,9 @@
+ 	if (!gd->serial.using_pre_serial &&
+ 	    !(gd->flags & GD_FLG_DISABLE_CONSOLE))
+ 		debug_uart_init();
++	printascii("H96-SPL-HYP-20261104-R1\n");
+ 	printascii("U-Boot SPL board init");
++	h96_trace("board-init-f-entry");
+ #endif
+ 	gd->sys_start_tick = get_ticks();
+ #ifdef CONFIG_SPL_PCIE_EP_SUPPORT
+--- a/drivers/core/lists.c
++++ b/drivers/core/lists.c
+@@ -8,6 +8,10 @@
+  */
+ 
+ #include <common.h>
++#if defined(CONFIG_SPL_BUILD)
++#include <debug_uart.h>
++#include <asm/sections.h>
++#endif
+ #include <errno.h>
+ #include <dm/device.h>
+ #include <dm/device-internal.h>
+@@ -113,6 +117,18 @@
+ 		return -ENOENT;
+ 
+ 	while (of_match->compatible) {
++#if defined(CONFIG_SPL_BUILD)
++		/* Diagnostic only: report the exact bad match before strcmp dereferences it. */
++		if ((ulong)of_match->compatible < (ulong)__image_copy_start ||
++		    (ulong)of_match->compatible >= (ulong)__image_copy_end) {
++			ulong value = (ulong)of_match->compatible;
++			printascii("H96TRACE BAD compatible table=");
++			printhex8((ulong)of_match >> 32); printhex8((ulong)of_match);
++			printascii(" pointer="); printhex8(value >> 32); printhex8(value);
++			printascii("\n");
++			hang();
++		}
++#endif
+ 		if (!strcmp(of_match->compatible, compat)) {
+ 			*of_idp = of_match;
+ 			return 0;
+@@ -138,7 +154,13 @@
+ 
+ 	if (devp)
+ 		*devp = NULL;
++#ifdef CONFIG_SPL_BUILD
++ { extern void h96_sfc_validate(const char *stage); h96_sfc_validate("before-node-match"); }
++#endif
+ 	name = ofnode_get_name(node);
++#if defined(CONFIG_SPL_BUILD)
++	printascii("H96NODE "); printascii(name); printascii("\n");
++#endif
+ 	pr_debug("bind node %s\n", name);
+ 
+ 	compat_list = ofnode_get_property(node, "compatible", &compat_length);
+@@ -173,8 +195,14 @@
+ 			continue;
+ 
+ 		pr_debug("   - found match at '%s'\n", entry->name);
++#if defined(CONFIG_SPL_BUILD)
++		printascii("H96BIND "); printascii(entry->name); printascii("\n");
++#endif
+ 		ret = device_bind_with_driver_data(parent, entry, name,
+ 						   id->data, node, &dev);
++#ifdef CONFIG_SPL_BUILD
++ { extern void h96_sfc_validate(const char *stage); h96_sfc_validate("after-device-bind"); }
++#endif
+ 		if (ret == -ENODEV) {
+ 			pr_debug("Driver '%s' refuses to bind\n", entry->name);
+ 			continue;
+--- a/arch/arm/lib/interrupts_64.c
++++ b/arch/arm/lib/interrupts_64.c
+@@ -124,6 +124,17 @@
+ 	}
+ 
+ 	printf("ESR:     %lx (ec=%ld)\n", regs->esr, REG_BITS(regs->esr, 26, 0x3f));
++	{
++		ulong far;
++		int el = current_el();
++		if (el == 3)
++			asm volatile("mrs %0, far_el3" : "=r" (far));
++		else if (el == 2)
++			asm volatile("mrs %0, far_el2" : "=r" (far));
++		else
++			asm volatile("mrs %0, far_el1" : "=r" (far));
++		printf("FAR_EL%d: %lx SP: %lx SCTLR: %lx\n", el, far, regs->sp, (ulong)get_sctlr());
++	}
+ 
+ 	for (i = 0; i < 29; i += 2)
+ 		printf("x%-2d: %016lx x%-2d: %016lx\n",

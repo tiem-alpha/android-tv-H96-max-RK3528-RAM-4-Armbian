@@ -100,7 +100,7 @@ xzcat "$image_path" | \
 # Or, for an uncompressed image:
 image_path='armbian-build/output/images/REPLACE-WITH-YOUR-IMAGE.img'
 sd_device='/dev/REPLACE-WITH-YOUR-SD-CARD'
-sudo dd if="$image_path" of="$sd_device" bs=16M oflag=direct conv=fsync status=progress
+sudo dd if="$image_path" of="$sd_device" bs=16M oflag=direct conv=fsync status= 
 sync
 ```
 

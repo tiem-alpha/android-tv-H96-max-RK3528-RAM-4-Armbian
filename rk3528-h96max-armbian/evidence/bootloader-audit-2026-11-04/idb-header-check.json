@@ -1,0 +1,20 @@
+{
+  "magic": "0x534e4b52",
+  "header_sha256_verified": true,
+  "entries": [
+    {
+      "offset": 2048,
+      "size_with_padding": 61440,
+      "address_field": "0xffffffff",
+      "counter": 1,
+      "sha256_verified": true
+    },
+    {
+      "offset": 63488,
+      "size_with_padding": 247808,
+      "address_field": "0xffffffff",
+      "counter": 2,
+      "sha256_verified": true
+    }
+  ]
+}

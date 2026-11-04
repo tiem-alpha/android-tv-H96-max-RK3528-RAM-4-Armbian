@@ -1,0 +1,10 @@
+{
+  "fit_uboot_matches_retained": true,
+  "fit_fdt_matches_retained": true,
+  "atf-1_matches_bl31_v1.17": true,
+  "atf-2_matches_bl31_v1.17": true,
+  "atf-3_matches_bl31_v1.17": true,
+  "ddr_offset_2048": true,
+  "spl_offset_63488": true,
+  "incident_idb_hash": true
+}

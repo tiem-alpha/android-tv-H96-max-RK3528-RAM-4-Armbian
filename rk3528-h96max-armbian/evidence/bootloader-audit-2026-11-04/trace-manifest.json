@@ -1,0 +1,52 @@
+{
+  "status": "BUILT_NOT_HARDWARE_TESTED",
+  "baseline_loader_reproduced_exactly": true,
+  "source_tree": "/home/nguyentiem/Project/H96_max_armbian/rk3528-h96max-armbian/armbian-build/cache/sources/u-boot-worktree/u-boot-rockchip64/next-dev-v2024.10",
+  "trace_build_tree": "/tmp/h96-spl-trace-20261104",
+  "trace_patch_sha256": "e49f52312875e74cbb25083adc6b6a7dea279a34171f3d3155b771b8ae48e328",
+  "compiler": "13.3.0",
+  "dcache_config_diff_only": true,
+  "device_writes": false,
+  "variants": [
+    {
+      "file": "baseline-reproduced.img",
+      "variant": "baseline",
+      "ddr3_mhz": 1056,
+      "sha256": "33141f9180217ab259c79fafcab09f2ed65c4e10bba5685f6f7d9bfc56fe68be",
+      "size": 311296,
+      "spl_sha256": "6addd3cc424a94271e17a846a4a11752660ebca60cdae1e631357d59cff1d5ca",
+      "spl_offset": 63488,
+      "spl_size": 245892
+    },
+    {
+      "file": "idbloader-trace-1056-dcache-on.img",
+      "variant": "trace-dcache-on",
+      "ddr3_mhz": 1056,
+      "sha256": "ffab13ca9133bb61ac6e20199c6708d51fcef436119fb9ef1bd287e72e625c89",
+      "size": 313344,
+      "spl_sha256": "b68cca66698d625e3a59efde069ad505826db24af9e3fd58a3b1735a9a3c5b3a",
+      "spl_offset": 63488,
+      "spl_size": 248532
+    },
+    {
+      "file": "idbloader-trace-528-dcache-on.img",
+      "variant": "trace-dcache-on",
+      "ddr3_mhz": 528,
+      "sha256": "4c5a49cf78a30e7195e7e35cfb1a0c0e69124ededdddad1081c399fd1bd2450e",
+      "size": 313344,
+      "spl_sha256": "b68cca66698d625e3a59efde069ad505826db24af9e3fd58a3b1735a9a3c5b3a",
+      "spl_offset": 63488,
+      "spl_size": 248532
+    },
+    {
+      "file": "idbloader-trace-1056-dcache-off.img",
+      "variant": "trace-dcache-off",
+      "ddr3_mhz": 1056,
+      "sha256": "07c4941ee6f4c03113283b2897767943b8ef1ce7ea1721e4efe716e174b01a65",
+      "size": 311296,
+      "spl_sha256": "e55e86ea76981c452e80f7a6c23dcf590fff274ab569d2e2451d88dfc4b97b58",
+      "spl_offset": 63488,
+      "spl_size": 246100
+    }
+  ]
+}

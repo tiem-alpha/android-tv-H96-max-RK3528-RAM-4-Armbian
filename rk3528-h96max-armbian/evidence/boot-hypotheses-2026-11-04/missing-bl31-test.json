@@ -1,0 +1,5 @@
+{
+  "missing_bl31_rejected": true,
+  "dummy_elf_not_created": true,
+  "returncode": 1
+}

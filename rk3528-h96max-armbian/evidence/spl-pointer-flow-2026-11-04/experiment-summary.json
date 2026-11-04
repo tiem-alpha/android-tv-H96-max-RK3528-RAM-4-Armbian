@@ -1,0 +1,149 @@
+{
+  "verified_runs": [
+    {
+      "file": "bad-sfc-compatible-el3.json",
+      "scenario": "bad-sfc-compatible",
+      "entry": "start",
+      "until": "early-init",
+      "modeled_el": 3,
+      "instructions": 1235256,
+      "stop": "spl_early_init_return",
+      "final_pointer": "0x28e6f",
+      "cpu_writes_to_target": 0,
+      "heap_bytes": 38880,
+      "bad_memory": null
+    },
+    {
+      "file": "bad-sfc-reg-el3.json",
+      "scenario": "bad-sfc-reg",
+      "entry": "start",
+      "until": "early-init",
+      "modeled_el": 3,
+      "instructions": 1339289,
+      "stop": "spl_early_init_return",
+      "final_pointer": "0x28e6f",
+      "cpu_writes_to_target": 0,
+      "heap_bytes": 40336,
+      "bad_memory": null
+    },
+    {
+      "file": "clean-el2.json",
+      "scenario": "clean",
+      "entry": "start",
+      "until": "early-init",
+      "modeled_el": 2,
+      "instructions": 1339291,
+      "stop": "spl_early_init_return",
+      "final_pointer": "0x28e6f",
+      "cpu_writes_to_target": 0,
+      "heap_bytes": 40336,
+      "bad_memory": null
+    },
+    {
+      "file": "clean-el3.json",
+      "scenario": "clean",
+      "entry": "start",
+      "until": "early-init",
+      "modeled_el": 3,
+      "instructions": 1339289,
+      "stop": "spl_early_init_return",
+      "final_pointer": "0x28e6f",
+      "cpu_writes_to_target": 0,
+      "heap_bytes": 40336,
+      "bad_memory": null
+    },
+    {
+      "file": "clean-pre-storage-el3.json",
+      "scenario": "clean",
+      "entry": "start",
+      "until": "boot-order",
+      "modeled_el": 3,
+      "instructions": 1343411,
+      "stop": "board_boot_order_entry",
+      "final_pointer": "0x28e6f",
+      "cpu_writes_to_target": 0,
+      "heap_bytes": 40336,
+      "bad_memory": null
+    },
+    {
+      "file": "injected-dtb-argument-el3.json",
+      "scenario": "injected-dtb-argument",
+      "entry": "start",
+      "until": "early-init",
+      "modeled_el": 3,
+      "instructions": 482476,
+      "stop": "invalid_memory",
+      "final_pointer": "0x28e6f",
+      "cpu_writes_to_target": 0,
+      "heap_bytes": 33208,
+      "bad_memory": {
+        "address": "0x300000027e6f",
+        "pc": "0x9414",
+        "access": 19,
+        "x0": "0x28e6f",
+        "x1": "0x300000027e6f",
+        "x4": "0x28e6f",
+        "lr": "0xe4f8"
+      }
+    },
+    {
+      "file": "injected-pointer-el3.json",
+      "scenario": "injected-pointer",
+      "entry": "start",
+      "until": "early-init",
+      "modeled_el": 3,
+      "instructions": 482475,
+      "stop": "invalid_memory",
+      "final_pointer": "0x300000027e6f",
+      "cpu_writes_to_target": 0,
+      "heap_bytes": 33208,
+      "bad_memory": {
+        "address": "0x300000027e6f",
+        "pc": "0x9410",
+        "access": 19
+      }
+    },
+    {
+      "file": "poison-bss-el3.json",
+      "scenario": "poison-bss",
+      "entry": "start",
+      "until": "early-init",
+      "modeled_el": 3,
+      "instructions": 1339289,
+      "stop": "spl_early_init_return",
+      "final_pointer": "0x28e6f",
+      "cpu_writes_to_target": 0,
+      "heap_bytes": 40336,
+      "bad_memory": null
+    },
+    {
+      "file": "poison-scratch-el3.json",
+      "scenario": "poison-scratch",
+      "entry": "start",
+      "until": "boot-order",
+      "modeled_el": 3,
+      "instructions": 1343411,
+      "stop": "board_boot_order_entry",
+      "final_pointer": "0x28e6f",
+      "cpu_writes_to_target": 0,
+      "heap_bytes": 40336,
+      "bad_memory": null
+    },
+    {
+      "file": "serial-atags-el3.json",
+      "scenario": "serial-atags",
+      "entry": "start",
+      "until": "early-init",
+      "modeled_el": 3,
+      "instructions": 1339325,
+      "stop": "spl_early_init_return",
+      "final_pointer": "0x28e6f",
+      "cpu_writes_to_target": 0,
+      "heap_bytes": 40336,
+      "bad_memory": null
+    }
+  ],
+  "non_injection_runs": 8,
+  "controlled_fault_injections": 2,
+  "replay_tool_sha256": "230c6747f5f19b9db577f3cf4c14b86a65120649791aea7fa27301ec23f745ad"
+}

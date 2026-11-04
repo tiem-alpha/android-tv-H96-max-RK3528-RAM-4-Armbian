@@ -1,0 +1,454 @@
+{
+  "until": "early-init",
+  "entry": "start",
+  "scenario": "injected-cpu-store",
+  "modeled_el": 3,
+  "match_page_read_only": true,
+  "initial_mutation": null,
+  "binary_sha256": "6addd3cc424a94271e17a846a4a11752660ebca60cdae1e631357d59cff1d5ca",
+  "checkpoints": [
+    {
+      "function": "board_init_f",
+      "pc": "0x6c8",
+      "pointer": "0x28e6f"
+    },
+    {
+      "function": "spl_early_init",
+      "pc": "0x25d4",
+      "pointer": "0x28e6f"
+    },
+    {
+      "function": "spl_common_init.constprop.0",
+      "pc": "0x2520",
+      "pointer": "0x28e6f"
+    },
+    {
+      "function": "get_page_table_size",
+      "pc": "0x18d0",
+      "pointer": "0x28e6f"
+    },
+    {
+      "function": "get_page_table_size",
+      "pc": "0x18d0",
+      "pointer": "0x28e6f"
+    },
+    {
+      "function": "setup_pgtables",
+      "pc": "0x1918",
+      "pointer": "0x28e6f"
+    }
+  ],
+  "load_trace": [],
+  "write_regions": {
+    "MMIO": 35,
+    "image": 14,
+    "stack": 8318,
+    "GD": 463
+  },
+  "write_bounds": {
+    "MMIO": [
+      "0xfe48aff0",
+      "0xff9f0014"
+    ],
+    "image": [
+      "0x2ad40",
+      "0x31259"
+    ],
+    "stack": [
+      "0x3f5fd10",
+      "0x3f5fe40"
+    ],
+    "GD": [
+      "0x3f5fe40",
+      "0x3f60000"
+    ]
+  },
+  "target_writes": [
+    {
+      "pc": "0x95c4",
+      "address": "0x31258",
+      "size": 1,
+      "value": "0xa5"
+    }
+  ],
+  "count": 73287,
+  "stop": "invalid_memory",
+  "registers": {
+    "vbar_el3": 4096,
+    "scr_el3": 15,
+    "cptr_el3": 0,
+    "cntfrq_el0": 24000000,
+    "sctlr_el3": 4096,
+    "daifclr": 4
+  },
+  "image_writes": [
+    {
+      "pc": "0x2188",
+      "function": "setjmp",
+      "address": "0x2ad40",
+      "size": 8,
+      "value": "0x0"
+    },
+    {
+      "pc": "0x2188",
+      "function": "setjmp",
+      "address": "0x2ad48",
+      "size": 8,
+      "value": "0x0"
+    },
+    {
+      "pc": "0x218c",
+      "function": "setjmp",
+      "address": "0x2ad50",
+      "size": 8,
+      "value": "0x0"
+    },
+    {
+      "pc": "0x218c",
+      "function": "setjmp",
+      "address": "0x2ad58",
+      "size": 8,
+      "value": "0x0"
+    },
+    {
+      "pc": "0x2190",
+      "function": "setjmp",
+      "address": "0x2ad60",
+      "size": 8,
+      "value": "0x0"
+    },
+    {
+      "pc": "0x2190",
+      "function": "setjmp",
+      "address": "0x2ad68",
+      "size": 8,
+      "value": "0x0"
+    },
+    {
+      "pc": "0x2194",
+      "function": "setjmp",
+      "address": "0x2ad70",
+      "size": 8,
+      "value": "0x0"
+    },
+    {
+      "pc": "0x2194",
+      "function": "setjmp",
+      "address": "0x2ad78",
+      "size": 8,
+      "value": "0x0"
+    },
+    {
+      "pc": "0x2198",
+      "function": "setjmp",
+      "address": "0x2ad80",
+      "size": 8,
+      "value": "0x0"
+    },
+    {
+      "pc": "0x2198",
+      "function": "setjmp",
+      "address": "0x2ad88",
+      "size": 8,
+      "value": "0x0"
+    },
+    {
+      "pc": "0x219c",
+      "function": "setjmp",
+      "address": "0x2ad90",
+      "size": 8,
+      "value": "0xfe48aff0"
+    },
+    {
+      "pc": "0x219c",
+      "function": "setjmp",
+      "address": "0x2ad98",
+      "size": 8,
+      "value": "0x5d8"
+    },
+    {
+      "pc": "0x21a4",
+      "function": "setjmp",
+      "address": "0x2ada0",
+      "size": 8,
+      "value": "0xfe48aff0"
+    },
+    {
+      "pc": "0x95c4",
+      "function": "memset",
+      "address": "0x31258",
+      "size": 1,
+      "value": "0xa5"
+    }
+  ],
+  "target_reads": [],
+  "calls": [
+    {
+      "caller": "save_boot_params",
+      "callee": "setjmp",
+      "count": 1
+    },
+    {
+      "caller": "save_boot_params",
+      "callee": "0x2c",
+      "count": 1
+    },
+    {
+      "caller": "0xf4",
+      "callee": "apply_core_errata",
+      "count": 1
+    },
+    {
+      "caller": "0xf8",
+      "callee": "lowlevel_init",
+      "count": 1
+    },
+    {
+      "caller": "0xfc",
+      "callee": "_main",
+      "count": 1
+    },
+    {
+      "caller": "_main",
+      "callee": "board_init_f_alloc_reserve",
+      "count": 1
+    },
+    {
+      "caller": "_main",
+      "callee": "board_init_f_init_reserve",
+      "count": 1
+    },
+    {
+      "caller": "board_init_f_init_reserve",
+      "callee": "memset",
+      "count": 1
+    },
+    {
+      "caller": "_main",
+      "callee": "board_init_f_boot_flags",
+      "count": 1
+    },
+    {
+      "caller": "board_init_f_boot_flags",
+      "callee": "atags_get_tag",
+      "count": 1
+    },
+    {
+      "caller": "_main",
+      "callee": "board_init_f",
+      "count": 1
+    },
+    {
+      "caller": "board_init_f",
+      "callee": "rockchip_stimer_init",
+      "count": 1
+    },
+    {
+      "caller": "board_init_f",
+      "callee": "debug_uart_init",
+      "count": 1
+    },
+    {
+      "caller": "debug_uart_init",
+      "callee": "board_debug_uart_init",
+      "count": 1
+    },
+    {
+      "caller": "board_init_f",
+      "callee": "printascii",
+      "count": 1
+    },
+    {
+      "caller": "board_init_f",
+      "callee": "get_ticks",
+      "count": 1
+    },
+    {
+      "caller": "board_init_f",
+      "callee": "spl_early_init",
+      "count": 1
+    },
+    {
+      "caller": "spl_early_init",
+      "callee": "spl_common_init.constprop.0",
+      "count": 1
+    },
+    {
+      "caller": "spl_common_init.constprop.0",
+      "callee": "get_page_table_size",
+      "count": 2
+    },
+    {
+      "caller": "get_page_table_size",
+      "callee": "get_tcr",
+      "count": 2
+    },
+    {
+      "caller": "get_page_table_size",
+      "callee": "count_required_pts",
+      "count": 2
+    },
+    {
+      "caller": "count_required_pts",
+      "callee": "count_required_pts",
+      "count": 1032
+    },
+    {
+      "caller": "spl_common_init.constprop.0",
+      "callee": "memalign_simple",
+      "count": 1
+    },
+    {
+      "caller": "spl_common_init.constprop.0",
+      "callee": "dcache_enable",
+      "count": 1
+    },
+    {
+      "caller": "dcache_enable",
+      "callee": "invalidate_dcache_all",
+      "count": 1
+    },
+    {
+      "caller": "dcache_enable",
+      "callee": "__asm_invalidate_tlb_all",
+      "count": 1
+    },
+    {
+      "caller": "dcache_enable",
+      "callee": "mmu_setup",
+      "count": 1
+    },
+    {
+      "caller": "mmu_setup",
+      "callee": "setup_pgtables",
+      "count": 1
+    },
+    {
+      "caller": "setup_pgtables",
+      "callee": "create_table",
+      "count": 1
+    },
+    {
+      "caller": "create_table",
+      "callee": "memset",
+      "count": 1
+    }
+  ],
+  "stubs": {
+    "invalidate_dcache_all": 1,
+    "__asm_invalidate_tlb_all": 1
+  },
+  "sfc_compares": 0,
+  "recent": [
+    [
+      "0x165c",
+      "create_table"
+    ],
+    [
+      "0x1660",
+      "create_table"
+    ],
+    [
+      "0x1664",
+      "create_table"
+    ],
+    [
+      "0x1668",
+      "create_table"
+    ],
+    [
+      "0x166c",
+      "create_table"
+    ],
+    [
+      "0x1670",
+      "create_table"
+    ],
+    [
+      "0x1674",
+      "create_table"
+    ],
+    [
+      "0x1678",
+      "create_table"
+    ],
+    [
+      "0x167c",
+      "create_table"
+    ],
+    [
+      "0x1680",
+      "create_table"
+    ],
+    [
+      "0x1684",
+      "create_table"
+    ],
+    [
+      "0x1688",
+      "create_table"
+    ],
+    [
+      "0x16a8",
+      "create_table"
+    ],
+    [
+      "0x16ac",
+      "create_table"
+    ],
+    [
+      "0x16b0",
+      "create_table"
+    ],
+    [
+      "0x16b4",
+      "create_table"
+    ],
+    [
+      "0x95b4",
+      "memset"
+    ],
+    [
+      "0x95b8",
+      "memset"
+    ],
+    [
+      "0x95bc",
+      "memset"
+    ],
+    [
+      "0x95c4",
+      "memset"
+    ]
+  ],
+  "injection": {
+    "pc": "0x95b4",
+    "function": "memset",
+    "destination": "0x31258",
+    "performed_by": "test harness redirects a CPU store; not a discovered SPL bug"
+  },
+  "bad_memory": {
+    "address": "0x31258",
+    "pc": "0x95c4",
+    "access": 22,
+    "x0": "0x31258",
+    "x1": "0xa5",
+    "x4": "0x3fff",
+    "lr": "0x16b8"
+  },
+  "error": "Write to write-protected memory (UC_ERR_WRITE_PROT)",
+  "heap_state": {
+    "malloc_base": 66453504,
+    "malloc_limit": 524288,
+    "malloc_ptr": 32768
+  },
+  "final_pc": "0x95c4",
+  "final_pointer": "0x28e6f",
+  "limitations": [
+    "Starts at SPL entry or _main after DDR/BootROM handoff; initial BootROM SP is modeled",
+    "EL and system registers are modeled; ARM MMU/cache effects are not executed",
+    "Only cache/TLB invalidation functions are stubbed; UART0 LSR is modeled ready",
+    "MMIO reads default to zero except UART0 LSR=0x60; this is not a complete board model",
+    "No exhaustive exploration of arbitrary corrupt RAM/registers or external DMA"
+  ]
+}

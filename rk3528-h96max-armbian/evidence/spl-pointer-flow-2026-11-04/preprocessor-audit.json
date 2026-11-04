@@ -1,0 +1,51 @@
+[
+  {
+    "source": "drivers/core/root.c",
+    "preprocessed_sha256": "afba0b3785af0bf01f6221a5806d3d0a1bcc06b1301670e95f022328190544af",
+    "fix_drivers_definition_present": false,
+    "writes_to_of_match": [],
+    "preprocessed_file": "/tmp/h96-spl-preprocessed/drivers_core_root.i"
+  },
+  {
+    "source": "drivers/core/lists.c",
+    "preprocessed_sha256": "f7d2e85f01405c53268e51ed86f627d6c71de85d51bd152123d0ec823944c33b",
+    "fix_drivers_definition_present": false,
+    "writes_to_of_match": [],
+    "preprocessed_file": "/tmp/h96-spl-preprocessed/drivers_core_lists.i"
+  },
+  {
+    "source": "drivers/core/device.c",
+    "preprocessed_sha256": "db6ac6b280ce024c1b3a359b09e27c1ef7db1d4500abf0e0bd109df7a0718d9f",
+    "fix_drivers_definition_present": false,
+    "writes_to_of_match": [],
+    "preprocessed_file": "/tmp/h96-spl-preprocessed/drivers_core_device.i"
+  },
+  {
+    "source": "common/spl/spl.c",
+    "preprocessed_sha256": "a8ad7c3be6aa6786e0a2b83111335af287eb698baafccd0f865471b439135962",
+    "fix_drivers_definition_present": false,
+    "writes_to_of_match": [],
+    "preprocessed_file": "/tmp/h96-spl-preprocessed/common_spl_spl.i"
+  },
+  {
+    "source": "arch/arm/mach-rockchip/spl.c",
+    "preprocessed_sha256": "bbf4d78785b72dd4eacdb22e82cc8a65cf6304e6f1377519fe97bdf668b29182",
+    "fix_drivers_definition_present": false,
+    "writes_to_of_match": [],
+    "preprocessed_file": "/tmp/h96-spl-preprocessed/arch_arm_mach-rockchip_spl.i"
+  },
+  {
+    "source": "drivers/spi/rockchip_sfc.c",
+    "preprocessed_sha256": "2100fb852f8f352faaf82c2011bf8197851a441c3496319c813db76d1d27285a",
+    "fix_drivers_definition_present": false,
+    "writes_to_of_match": [],
+    "preprocessed_file": "/tmp/h96-spl-preprocessed/drivers_spi_rockchip_sfc.i"
+  },
+  {
+    "source": "drivers/serial/ns16550.c",
+    "preprocessed_sha256": "f9a9937f857d1bf689bff81b0f66cfd6f5b584b67258b6a78fc8fd1762f7df74",
+    "fix_drivers_definition_present": false,
+    "writes_to_of_match": [],
+    "preprocessed_file": "/tmp/h96-spl-preprocessed/drivers_serial_ns16550.i"
+  }
+]

@@ -1,0 +1,78 @@
+{
+  "status": "STATICALLY_VERIFIED_NOT_HARDWARE_TESTED",
+  "device_writes": false,
+  "diagnostic_id": "H96-SPL-HYP-20261104-R1",
+  "cache_config_diff_only": [
+    "-# CONFIG_SPL_SYS_DCACHE_OFF is not set",
+    "+CONFIG_SPL_SYS_DCACHE_OFF=y"
+  ],
+  "production_patches": {
+    "h96-require-valid-bl31-fit.patch": "1aa017afb798d4e025aa69757a1b7896da38c7acfc343444525ae1b146a1c3cc",
+    "h96-fix-early-calloc-and-tcr-width.patch": "72b0cbb5eede460017afb82a6c812a1a4b7141a538e0eb490c39188ebfb87935"
+  },
+  "shared_fit": "hardened/u-boot.itb",
+  "shared_fit_sha256": "48443a8ec47b05714368612aacf6e9e9de04229eb363e1c0255bdfd20091ff25",
+  "variants": [
+    {
+      "file": "idbloader-hardened-ddr1056.img",
+      "variant": "hardened",
+      "ddr3_mhz": 1056,
+      "sha256": "6b3cb9349596473910d139a0ec6200b40d3d6696e2b24ca0a782ee075feb42d3",
+      "spl_sha256": "cf82116d95205d541482740f534d99bdcb21a4924c429fd2f72f4a69159282ea",
+      "spl_size": 247300,
+      "spl_offset": 63488,
+      "symbols": {
+        "rockchip_sfc_ids": "0x317d8",
+        "strcmp": "0x963c"
+      }
+    },
+    {
+      "file": "idbloader-diagnostic-cache-on-ddr1056.img",
+      "variant": "diagnostic-cache-on",
+      "ddr3_mhz": 1056,
+      "sha256": "f2262cb6f6a02dfc74ae2daa3c371792e31b28c729b832714612260e11d0c104",
+      "spl_sha256": "b58a9205a59ae538c2b4671da8112153fe6ffcee18e590294093d28bf5ed4984",
+      "spl_size": 249004,
+      "spl_offset": 63488,
+      "symbols": {
+        "rockchip_sfc_ids": "0x31e68",
+        "strcmp": "0x98cc",
+        "h96_sfc_validate": "0x1fae4",
+        "h96_fspi_name": "0x2b7ab"
+      },
+      "diagnostic_id": "H96-SPL-HYP-20261104-R1"
+    },
+    {
+      "file": "idbloader-diagnostic-cache-on-ddr528.img",
+      "variant": "diagnostic-cache-on",
+      "ddr3_mhz": 528,
+      "sha256": "e8b295c63eacc7bfb3432810bc95ef8493713e1df18beea54d7841c2e19a9b47",
+      "spl_sha256": "b58a9205a59ae538c2b4671da8112153fe6ffcee18e590294093d28bf5ed4984",
+      "spl_size": 249004,
+      "spl_offset": 63488,
+      "symbols": {
+        "rockchip_sfc_ids": "0x31e68",
+        "strcmp": "0x98cc",
+        "h96_sfc_validate": "0x1fae4",
+        "h96_fspi_name": "0x2b7ab"
+      },
+      "diagnostic_id": "H96-SPL-HYP-20261104-R1"
+    },
+    {
+      "file": "idbloader-diagnostic-cache-off-ddr1056.img",
+      "variant": "diagnostic-cache-off",
+      "ddr3_mhz": 1056,
+      "sha256": "106109cb8123ee77fff20d22869575f3299b8790de9e3b9fe880f7509dad6277",
+      "spl_sha256": "e4c0c047272274d0862c1cbd946f1ef3968287849193046e3a2cac9b4e123cd1",
+      "spl_size": 246572,
+      "spl_offset": 63488,
+      "symbols": {
+        "rockchip_sfc_ids": "0x314f0",
+        "strcmp": "0x90d4",
+        "h96_sfc_validate": "0x1f2ec",
+        "h96_fspi_name": "0x2ae95"
+      },
+      "diagnostic_id": "H96-SPL-HYP-20261104-R1"
+    }
+  ]
+}

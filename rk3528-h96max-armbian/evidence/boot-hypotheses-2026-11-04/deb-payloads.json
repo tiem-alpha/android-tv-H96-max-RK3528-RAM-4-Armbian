@@ -1,0 +1,36 @@
+[
+  {
+    "deb": "linux-u-boot-rk3528-h96max-vendor_26.11.0-trunk_arm64__2017.09-S39cd-P690a-H1795-Vb472-Bb936-R448a.deb",
+    "payloads": {
+      "idbloader.img": {
+        "size": 311296,
+        "sha256": "3a517e395915eaf4f7501c29b391ffceb85375be7176e65b6d297006979497d4"
+      },
+      "u-boot-config-target-1": {
+        "size": 41910,
+        "sha256": "833c0ad628e36cfa386b5003297d1eb5c1ad58dd87254d20b9ab192eda9cf994"
+      },
+      "u-boot.itb": {
+        "size": 1313280,
+        "sha256": "94cfc37b83aedac763f7cece19d8b6721f2b56cdd777dc20bc5d0f0353edc1f4"
+      }
+    }
+  },
+  {
+    "deb": "linux-u-boot-rk3528-h96max-vendor_26.11.0-trunk_arm64__2017.09-S39cd-P00de-H1795-Vb472-Bb936-R448a.deb",
+    "payloads": {
+      "idbloader.img": {
+        "size": 311296,
+        "sha256": "33141f9180217ab259c79fafcab09f2ed65c4e10bba5685f6f7d9bfc56fe68be"
+      },
+      "u-boot-config-target-1": {
+        "size": 41909,
+        "sha256": "6aba8787cfac790b32467a0a00a01f59e913cb80abc78423d18113b04795cd57"
+      },
+      "u-boot.itb": {
+        "size": 1313280,
+        "sha256": "59f9e32c4ef73eda1cee620ca9c8e3644e6960483d04f2382fee3b510fcc5932"
+      }
+    }
+  }
+]
